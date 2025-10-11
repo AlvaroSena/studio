@@ -4,5 +4,14 @@
   "keywords": [],
   "author": "Alvaro Sena",
   "license": "ISC",
-  "description": "Este repositório contém o desenvolvimento do MVP (Minimum Viable Product) de um sistema de gestão para estúdios de Pilates, criado como parte de um projeto acadêmico da faculdade."
+  "description": "Este repositório contém o desenvolvimento do MVP (Minimum Viable Product) de um sistema de gestão para estúdios de Pilates, criado como parte de um projeto acadêmico da faculdade.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^24.7.0",
+    "typescript": "^5.9.3",
+    "zod": "^4.1.12"
+  }
 }
