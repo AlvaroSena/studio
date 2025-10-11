@@ -6,3 +6,4 @@ export const routes = Router();
 const userController = new UserController();
 
 routes.post("/users", userController.createUser)
+routes.get("/users", userController.findAll)

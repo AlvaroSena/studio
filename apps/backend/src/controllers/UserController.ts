@@ -7,9 +7,12 @@ export class UserController {
 
     const user = new User(data);
 
-    await user.save();
-    response.status(201).json({
-      userId: user.getId()
-    });
+    const userCreated =await user.save();
+    response.status(201).json(userCreated);
+  }
+
+  async findAll(request: Request, response: Response) {
+    const users = await User.findAll();
+    response.json(users);
   }
 }

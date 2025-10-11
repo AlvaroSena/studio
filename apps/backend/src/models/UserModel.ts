@@ -1,4 +1,5 @@
 import { userSchema, UserType } from "@shared/schemas/user"
+import { Exclude, instanceToPlain, plainToInstance } from 'class-transformer';
 import { db } from "../database";
 import { users } from "../database/schema";
 import { eq } from "drizzle-orm";
@@ -7,16 +8,22 @@ import { ConflictException } from "../exceptions/ConflictException";
 
 export class User {
   private id?: string;
+  private avatarUrl!: string;
   private name!: string;
   private email!: string;
+
+  @Exclude()
   private password!: string;
 
-  constructor({ id, name, email, password }: UserType) {
-    userSchema.parse({ id, name, email, password });
+  constructor({ id, name, email, password }: Partial<UserType> = {}) {
+    if (name && email && password) {
+      userSchema.parse({ id, name, email, password });
+      this.name = name
+      this.email = email
+      this.password = password
+    }
+
     this.id = id;
-    this.name = name;
-    this.email = email;
-    this.password = password;
   }
 
   getId() {
@@ -35,6 +42,14 @@ export class User {
     this.name = name;
   }
 
+  getAvatarUrl() {
+    return this.avatarUrl;
+  }
+
+  setAvatarUrl(avatarUrl: string) {
+    this.avatarUrl = avatarUrl;
+  }
+
   getEmail() {
     return this.email;
   }
@@ -51,7 +66,7 @@ export class User {
     this.password = password;
   }
 
-  async save(): Promise<User> {
+  async save(): Promise<Partial<User>> {
     const [emailAlreadyTaken] = await db.select().from(users).where(eq(users.email, this.getEmail()));
 
     if (emailAlreadyTaken) {
@@ -64,7 +79,25 @@ export class User {
 
     const [createdUser] = await db.insert(users).values({ name: this.getName(), email: this.getEmail(), password: this.getPassword(), role: "admin" }).returning();
 
-    Object.assign(this, createdUser);
-    return this;
+    const createdUserInstance = plainToInstance(User, createdUser);
+
+    return instanceToPlain(createdUserInstance);
+  }
+
+  static async findAll(): Promise<Partial<User>[]>  {
+    const result = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        avatarUrl: users.avatarUrl,
+        email: users.email,
+        role: users.role,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt
+      })
+      .from(users);
+
+
+    return plainToInstance(User, result);
   }
 }
