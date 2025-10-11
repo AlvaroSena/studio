@@ -15,4 +15,30 @@ export class UserController {
     const users = await User.findAll();
     response.json(users);
   }
+
+  async findById(request: Request, response: Response) {
+    const { id } = request.params;
+
+    const user = await User.findById(id);
+
+    response.json({
+      user: {
+        id: user.getId(),
+        name: user.getName(),
+        avatarUrl: user.getAvatarUrl(),
+        email: user.getEmail(),
+        role: user.getRole(),
+        createdAt: user.getCreatedAt(),
+        updatedAt: user.getUpdatedAt(),
+      },
+    });
+  }
+
+  async deleteUser(request: Request, response: Response) {
+    const { id } = request.params;
+
+    await User.delete(id);
+
+    response.status(204).send();
+  }
 }
