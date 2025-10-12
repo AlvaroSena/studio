@@ -1,4 +1,4 @@
-import { uuid, pgTable, varchar, pgEnum, timestamp } from "drizzle-orm/pg-core";
+import { uuid, pgTable, varchar, pgEnum, timestamp, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const userRoleEnum = pgEnum("user_role", [
@@ -9,7 +9,7 @@ export const userRoleEnum = pgEnum("user_role", [
 ]);
 
 export const users = pgTable("users", {
-  id: uuid().defaultRandom().primaryKey(),
+  id: varchar({ length: 255 }).primaryKey(),
   name: varchar({ length: 100 }).notNull(),
   avatarUrl: varchar("avatar_url", { length: 255 }),
   email: varchar({ length: 255 }).notNull().unique(),
@@ -24,10 +24,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const studios = pgTable("studios", {
-  id: uuid().defaultRandom().primaryKey(),
+  id: varchar({ length: 255 }).primaryKey(),
   name: varchar({ length: 100 }).notNull(),
   address: varchar({ length: 255 }).notNull(),
-  adminId: uuid().notNull().references(() => users.id),
+  adminId: varchar({ length: 255 }).notNull().references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => ({
+  userIdIdx: index("studio_user_id_idx").on(table.adminId),
+}));

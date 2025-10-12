@@ -7,13 +7,16 @@ export class UserController {
 
     const user = new User(data);
 
-    const userCreated =await user.save();
-    response.status(201).json(userCreated);
+    const userCreated = await user.save();
+
+    return response.status(201).json({
+      userId: userCreated.getId(),
+    });
   }
 
   async findAll(request: Request, response: Response) {
     const users = await User.findAll();
-    response.json(users);
+    return response.json(users);
   }
 
   async findById(request: Request, response: Response) {
@@ -21,7 +24,7 @@ export class UserController {
 
     const user = await User.findById(id);
 
-    response.json({
+    return response.json({
       user: {
         id: user.getId(),
         name: user.getName(),
@@ -39,6 +42,6 @@ export class UserController {
 
     await User.delete(id);
 
-    response.status(204).send();
+    return response.status(204).send();
   }
 }

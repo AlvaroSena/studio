@@ -1,46 +1,31 @@
 import { userSchema, UserType } from "@shared/schemas/user"
-import { Exclude, instanceToPlain, plainToInstance } from 'class-transformer';
+import { ConflictException } from "../exceptions/ConflictException";
+import { NotFoundException } from "../exceptions/NotFoundException";
+import { Model } from "./Model";
 import { db } from "../database";
 import { userRoleEnum, users } from "../database/schema";
 import { eq } from "drizzle-orm";
 import { hash } from "bcryptjs";
-import { ConflictException } from "../exceptions/ConflictException";
-import { NotFoundException } from "../exceptions/NotFoundException";
 
 export type UserRole = (typeof userRoleEnum.enumValues)[number];
 
-export class User {
-  private id?: string;
-  private avatarUrl!: string | null;
+export class User extends Model {
   private name!: string;
+  private avatarUrl!: string | null;
   private email!: string;
-  private role!: UserRole;
-  private createdAt?: Date;
-  private updatedAt?: Date;
-
-  @Exclude()
   private password!: string;
+  private role!: UserRole;
 
-  constructor({ id, name, email, password, role, createdAt, updatedAt }: Partial<UserType> = {}) {
-    if (name && email && password && role) {
-      userSchema.parse({ id, name, email, password, role });
-      this.name = name
-      this.email = email
-      this.password = password
-      this.role = role;
-    }
 
-    this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
+  constructor({ id, name, avatarUrl, email, password, role, createdAt, updatedAt }: UserType) {
+    super(id, createdAt, updatedAt)
 
-  getId() {
-    return this.id;
-  }
-
-  setId(id: string) {
-    this.id = id;
+    userSchema.parse({ name, email, password, role });
+    this.name = name
+    this.avatarUrl = avatarUrl ?? null;
+    this.email = email
+    this.password = password
+    this.role = role;
   }
 
   getName() {
@@ -83,24 +68,8 @@ export class User {
     this.role = role;
   }
 
-  getCreatedAt() {
-    return this.createdAt;
-  }
 
-  setCreatedAt(createdAt: Date) {
-    this.createdAt = createdAt;
-  }
-
-  getUpdatedAt() {
-    return this.updatedAt;
-  }
-
-  setUpdatedAt(updatedAt: Date) {
-    this.updatedAt = updatedAt;
-  }
-
-
-  async save(): Promise<Partial<User>> {
+  async save(): Promise<User> {
     const [emailAlreadyTaken] = await db.select().from(users).where(eq(users.email, this.getEmail()));
 
     if (emailAlreadyTaken) {
@@ -111,14 +80,22 @@ export class User {
 
     this.setPassword(passwordHash)
 
-    const [createdUser] = await db.insert(users).values({ name: this.getName(), email: this.getEmail(), password: this.getPassword(), role: "admin" }).returning();
+    const [createdUser] = await db.insert(users).values({ id: this.getId(), name: this.getName(), email: this.getEmail(), password: this.getPassword(), role: this.getRole() }).returning();
 
-    const createdUserInstance = plainToInstance(User, createdUser);
+    return new User({
+      id: createdUser.id,
+      name: createdUser.name,
+      avatarUrl: createdUser.avatarUrl!,
+      email: createdUser.email,
+      password: createdUser.password!,
+      role: createdUser.role,
+      createdAt: createdUser.createdAt!,
+      updatedAt: createdUser.updatedAt!
+    });
 
-    return instanceToPlain(createdUserInstance);
   }
 
-  static async findAll(): Promise<Partial<User>[]>  {
+  static async findAll(): Promise<Omit<User, "password">[]> {
     const result = await db
       .select({
         id: users.id,
@@ -131,8 +108,10 @@ export class User {
       })
       .from(users);
 
-
-    return plainToInstance(User, result);
+    return result.map(user => {
+      const { password, ...rest } = user as any;
+      return rest;
+    });
   }
 
   static async findById(id: string): Promise<User> {
@@ -141,12 +120,13 @@ export class User {
     if (!user) {
       throw new NotFoundException("User not found.");
     }
+
     return new User({
       id: user.id,
       name: user.name,
       avatarUrl: user.avatarUrl!,
       email: user.email,
-      password: user.password,
+      password: user.password!,
       role: user.role,
       createdAt: user.createdAt!,
       updatedAt: user.updatedAt!
@@ -159,13 +139,12 @@ export class User {
     if (!user) {
       throw new NotFoundException("User not found.");
     }
-
     return new User({
       id: user.id,
       name: user.name,
       avatarUrl: user.avatarUrl!,
       email: user.email,
-      password: user.password,
+      password: user.password!,
       role: user.role,
       createdAt: user.createdAt!,
       updatedAt: user.updatedAt!
