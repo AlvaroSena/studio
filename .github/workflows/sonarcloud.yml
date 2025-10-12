@@ -35,11 +35,6 @@ jobs:
       - name: Install backend dependencies
         run: cd apps/backend && npm install
 
-      # 5️⃣ Compila os apps (caso exista script build)
-
-      - name: Build backend
-        run: cd apps/backend && npm run build --if-present
-
       # 7️⃣ Roda a análise do SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
