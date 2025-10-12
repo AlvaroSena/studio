@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { routes } from "./routes";
 import RateLimit from "express-rate-limit";
+import { restExceptionHandler } from "./middlewares/restExceptionHandler";
 
 export const app = express();
 app.use(
@@ -22,3 +23,4 @@ const limiter = RateLimit({
 
 app.use(limiter);
 app.use(routes);
+app.use(restExceptionHandler);
