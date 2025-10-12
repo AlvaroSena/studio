@@ -1,23 +1,14 @@
 import { Request, Response, NextFunction } from "express";
-import { ConflictException } from "../exceptions/ConflictException";
-import { NotFoundException } from "../exceptions/NotFoundException";
-import { InvalidCredentialsException } from "../exceptions/InvalidCredentialsException";
 import { Exception } from "../exceptions/Exception";
 
 export function restExceptionHandler(err: any, request: Request, response: Response, next: NextFunction) {
   let statusCode = 500;
   let message = "Internal server error";
 
-  switch (true) {
-    case err instanceof Exception:
-      statusCode = err.statusCode;
-      message = err.message;
-      break;
-
-    default:
-      console.log("Error: ", err);
-      break;
+  if (err instanceof Exception) {
+    statusCode = err.statusCode;
+    message = err.message;
   }
 
-  response.status(statusCode).json({ error: message });
+  return response.status(statusCode).json({ error: message });
 }
