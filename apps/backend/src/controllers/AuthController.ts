@@ -1,8 +1,9 @@
-import { Request, Response } from 'express';
-import { User } from '../models/UserModel';
-import { NotFoundException } from '../exceptions/NotFoundException';
-import { compare } from 'bcryptjs';
-import { generateTokens } from '../utils/generateTokens';
+import { Request, Response } from "express";
+import { User } from "../models/UserModel";
+import { NotFoundException } from "../exceptions/NotFoundException";
+import { InvalidCredentialsException } from "../exceptions/InvalidCredentialsException";
+import { compare } from "bcryptjs";
+import { generateTokens } from "../utils/generateTokens";
 
 export class AuthController {
   async login(request: Request, response: Response) {
@@ -11,32 +12,31 @@ export class AuthController {
     const user = await User.findByEmail(body.email);
 
     if (!user) {
-      throw new Error();
+      throw new InvalidCredentialsException("E-mail or password is incorrect.");
     }
 
     const passwordMatch = await compare(body.password, user.getPassword());
 
     if (!passwordMatch) {
-      throw new Error();
+      throw new InvalidCredentialsException("E-mail or password is incorrect.");
     }
 
     const userId = user.getId();
 
-     if (!userId) {
-       throw new NotFoundException("User not found.");
-     }
+    if (!userId) {
+      throw new NotFoundException("User not found.");
+    }
 
     const { accessToken, refreshToken } = generateTokens({ sub: userId, role: user.getRole() });
 
     response.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-       secure: false,
-       sameSite: "lax",
-       maxAge: 1000 * 60 * 60,
-    })
+      secure: false,
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60,
+    });
 
     return response.status(201).json({ accessToken, refreshToken });
-
   }
 
   async logout(request: Request, response: Response) {
