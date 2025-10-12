@@ -28,12 +28,12 @@ jobs:
       # 3️⃣ Instala dependências no root (caso uses um package.json global)
       - name: Install root dependencies
         if: hashFiles('package-lock.json') != ''
-        run: npm ci
+        run: npm install
 
       # 4️⃣ Instala dependências dos apps
 
       - name: Install backend dependencies
-        run: cd apps/backend && npm ci
+        run: cd apps/backend && npm install
 
       # 5️⃣ Compila os apps (caso exista script build)
 
