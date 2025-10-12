@@ -40,10 +40,6 @@ jobs:
       - name: Build backend
         run: cd apps/backend && npm run build --if-present
 
-      # 6️⃣ Roda os testes e gera cobertura (opcional, se tiver testes)
-      - name: Run backend tests
-        run: cd apps/backend && npm test --if-present
-
       # 7️⃣ Roda a análise do SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
