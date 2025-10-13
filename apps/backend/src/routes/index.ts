@@ -8,10 +8,12 @@ export const routes = Router();
 const userController = new UserController();
 const authController = new AuthController();
 
-routes.post("/users", userController.createUser)
-routes.get("/users", restVerifyAdminToken, userController.findAll)
-routes.get("/users/:id", restVerifyAdminToken, userController.findById)
-routes.delete("/users/delete/:id", restVerifyAdminToken, userController.deleteUser)
+routes.post("/users", userController.createUser);
+routes.get("/users", restVerifyAdminToken, userController.findAll);
+routes.get("/users/:id", restVerifyAdminToken, userController.findById);
+routes.get("/users/profile/me", restVerifyAdminToken, userController.findMe);
+routes.delete("/users/delete/:id", restVerifyAdminToken, userController.deleteUser);
 
 routes.post("/auth/login", authController.login);
+routes.post("/auth/refresh", authController.refresh);
 routes.post("/auth/logout", authController.logout);

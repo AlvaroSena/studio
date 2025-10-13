@@ -10,5 +10,9 @@ export function restExceptionHandler(err: any, request: Request, response: Respo
     message = err.message;
   }
 
+  if (process.env.NODE_ENV === "development") {
+    console.log(err);
+  }
+
   return response.status(statusCode).json({ error: message });
 }
