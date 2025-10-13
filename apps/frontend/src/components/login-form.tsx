@@ -72,7 +72,6 @@ export function LoginForm({
             id="email"
             type="email"
             placeholder="m@example.com"
-            required
             {...register("email")}
           />
           {errors.email && (
@@ -96,12 +95,7 @@ export function LoginForm({
               Esqueceu a senha?
             </a>
           </div>
-          <Input
-            id="password"
-            type="password"
-            required
-            {...register("password")}
-          />
+          <Input id="password" type="password" {...register("password")} />
           {errors.password && (
             <span className="text-xs text-red-600 poppins-medium">
               {errors.password.message}
