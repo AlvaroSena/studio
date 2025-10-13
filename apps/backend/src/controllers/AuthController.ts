@@ -1,9 +1,14 @@
 import { Request, Response } from "express";
-import { User } from "../models/UserModel";
-import { NotFoundException } from "../exceptions/NotFoundException";
+import { User, UserRole } from "../models/UserModel";
 import { InvalidCredentialsException } from "../exceptions/InvalidCredentialsException";
 import { compare } from "bcryptjs";
 import { generateTokens } from "../utils/generateTokens";
+import { verify } from "jsonwebtoken";
+
+export interface UserPayloadDTO {
+  sub: string;
+  role: UserRole;
+}
 
 export class AuthController {
   async login(request: Request, response: Response) {
@@ -21,13 +26,7 @@ export class AuthController {
       throw new InvalidCredentialsException("E-mail or password is incorrect.");
     }
 
-    const userId = user.getId();
-
-    if (!userId) {
-      throw new NotFoundException("User not found.");
-    }
-
-    const { accessToken, refreshToken } = generateTokens({ sub: userId, role: user.getRole() });
+    const { accessToken, refreshToken } = generateTokens({ sub: user.getId(), role: user.getRole() });
 
     response.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -37,6 +36,33 @@ export class AuthController {
     });
 
     return response.status(201).json({ accessToken, refreshToken });
+  }
+
+  refresh(request: Request, response: Response) {
+    const token = request.cookies.refreshToken;
+
+    if (!token) {
+      return response.sendStatus(401);
+    }
+
+    try {
+      const payload = verify(token, process.env.AUTH_SECRET!) as UserPayloadDTO;
+      const { refreshToken, accessToken } = generateTokens({
+        sub: payload.sub,
+        role: payload.role,
+      });
+
+      response.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        path: "/",
+      });
+
+      return response.status(201).json({ accessToken });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async logout(request: Request, response: Response) {

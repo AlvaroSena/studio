@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { User } from '../models/UserModel';
+import { Request, Response } from "express";
+import { User } from "../models/UserModel";
 
 export class UserController {
   async createUser(request: Request, response: Response) {
@@ -23,6 +23,24 @@ export class UserController {
     const { id } = request.params;
 
     const user = await User.findById(id);
+
+    return response.json({
+      user: {
+        id: user.getId(),
+        name: user.getName(),
+        avatarUrl: user.getAvatarUrl(),
+        email: user.getEmail(),
+        role: user.getRole(),
+        createdAt: user.getCreatedAt(),
+        updatedAt: user.getUpdatedAt(),
+      },
+    });
+  }
+
+  async findMe(request: Request, response: Response) {
+    const { sub } = request.user as { sub: string };
+
+    const user = await User.findById(sub);
 
     return response.json({
       user: {

@@ -1,6 +1,5 @@
 import { userSchema, UserType } from "@shared/schemas/user";
 import { ConflictException } from "../exceptions/ConflictException";
-import { NotFoundException } from "../exceptions/NotFoundException";
 import { Model } from "./Model";
 import { db } from "../database";
 import { userRoleEnum, users } from "../database/schema";
@@ -16,16 +15,7 @@ export class User extends Model {
   private password!: string;
   private role!: UserRole;
 
-  constructor({
-    id,
-    name,
-    avatarUrl,
-    email,
-    password,
-    role,
-    createdAt,
-    updatedAt,
-  }: UserType) {
+  constructor({ id, name, avatarUrl, email, password, role, createdAt, updatedAt }: UserType) {
     super(id, createdAt, updatedAt);
 
     userSchema.parse({ name, email, password, role });
@@ -77,10 +67,7 @@ export class User extends Model {
   }
 
   async save(): Promise<User> {
-    const [emailAlreadyTaken] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, this.getEmail()));
+    const [emailAlreadyTaken] = await db.select().from(users).where(eq(users.email, this.getEmail()));
 
     if (emailAlreadyTaken) {
       throw new ConflictException("E-mail already taken.");
@@ -132,11 +119,11 @@ export class User extends Model {
     });
   }
 
-  static async findById(id: string): Promise<User> {
+  static async findById(id: string): Promise<User | null> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
 
     if (!user) {
-      throw new NotFoundException("User not found.");
+      return null;
     }
 
     return new User({
@@ -151,12 +138,13 @@ export class User extends Model {
     });
   }
 
-  static async findByEmail(email: string): Promise<User> {
+  static async findByEmail(email: string): Promise<User | null> {
     const [user] = await db.select().from(users).where(eq(users.email, email));
 
     if (!user) {
-      throw new NotFoundException("User not found.");
+      return null;
     }
+
     return new User({
       id: user.id,
       name: user.name,
