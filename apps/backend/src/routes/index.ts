@@ -1,19 +1,8 @@
 import { Router } from "express";
-import { UserController } from "../controllers/UserController";
-import { AuthController } from "../controllers/AuthController";
-import { restVerifyAdminToken } from "../middlewares/restVerifyAdminToken";
+import { userRoutes } from "./user.routes";
+import { authRoutes } from "./auth.routes";
 
 export const routes = Router();
 
-const userController = new UserController();
-const authController = new AuthController();
-
-routes.post("/users", userController.createUser);
-routes.get("/users", restVerifyAdminToken, userController.findAll);
-routes.get("/users/:id", restVerifyAdminToken, userController.findById);
-routes.get("/users/profile/me", restVerifyAdminToken, userController.findMe);
-routes.delete("/users/delete/:id", restVerifyAdminToken, userController.deleteUser);
-
-routes.post("/auth/login", authController.login);
-routes.post("/auth/refresh", authController.refresh);
-routes.post("/auth/logout", authController.logout);
+routes.use("/users", userRoutes);
+routes.use("/auth", authRoutes);

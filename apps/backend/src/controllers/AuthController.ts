@@ -1,32 +1,13 @@
 import { Request, Response } from "express";
-import { User, UserRole } from "../models/UserModel";
-import { InvalidCredentialsException } from "../exceptions/InvalidCredentialsException";
-import { compare } from "bcryptjs";
-import { generateTokens } from "../utils/generateTokens";
-import { verify } from "jsonwebtoken";
-
-export interface UserPayloadDTO {
-  sub: string;
-  role: UserRole;
-}
+import { AuthService } from "../services/AuthService";
 
 export class AuthController {
+  constructor(private authService: AuthService) {}
+
   async login(request: Request, response: Response) {
     const body = request.body;
 
-    const user = await User.findByEmail(body.email);
-
-    if (!user) {
-      throw new InvalidCredentialsException("E-mail or password is incorrect.");
-    }
-
-    const passwordMatch = await compare(body.password, user.getPassword());
-
-    if (!passwordMatch) {
-      throw new InvalidCredentialsException("E-mail or password is incorrect.");
-    }
-
-    const { accessToken, refreshToken } = generateTokens({ sub: user.getId(), role: user.getRole() });
+    const { accessToken, refreshToken } = await this.authService.login(body.email, body.password);
 
     response.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -46,11 +27,7 @@ export class AuthController {
     }
 
     try {
-      const payload = verify(token, process.env.AUTH_SECRET!) as UserPayloadDTO;
-      const { refreshToken, accessToken } = generateTokens({
-        sub: payload.sub,
-        role: payload.role,
-      });
+      const { accessToken, refreshToken } = this.authService.refresh(token);
 
       response.cookie("refreshToken", refreshToken, {
         httpOnly: true,
