@@ -9,7 +9,7 @@ export const collaboratorSchema = z.object({
   regionalCouncil: z
     .string()
     .min(3, { message: "Name must be at least 3 characters long" }),
-  birthDate: z.date({ message: "Invalid date" }),
+  birthDate: z.coerce.date(),
   email: z.email({ message: "Invalid e-mail" }),
   phoneNumber: z
     .string()

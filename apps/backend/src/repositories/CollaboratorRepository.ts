@@ -12,7 +12,7 @@ export class CollaboratorRepository implements ICollaboratorRepository {
         id: collaborator.getId(),
         name: collaborator.getName(),
         regionalCouncil: collaborator.getRegionalCouncil(),
-        birthDate: collaborator.getBirthDate().toDateString(),
+        birthDate: collaborator.getBirthDate().toString(),
         email: collaborator.getEmail(),
         phoneNumber: collaborator.getPhoneNumber(),
         password: collaborator.getPassword(),

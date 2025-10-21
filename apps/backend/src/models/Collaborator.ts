@@ -1,6 +1,6 @@
 import { Model } from "./Model";
 import { collaboratorSchema, CollaboratorType } from "@shared/schemas/collaborator";
-import { collaboratorRoleEnum, collaborators } from "../database/schema";
+import { collaboratorRoleEnum } from "../database/schema";
 
 export type CollaboratorRole = (typeof collaboratorRoleEnum.enumValues)[number];
 
