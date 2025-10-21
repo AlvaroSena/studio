@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { collaboratorRoutes } from "./user.routes";
+import { collaboratorRoutes } from "./collaborator.routes";
 import { authRoutes } from "./auth.routes";
 
 export const routes = Router();
