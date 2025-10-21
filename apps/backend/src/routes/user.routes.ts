@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
-import { restVerifyAdminToken } from "../middlewares/restVerifyAdminToken";
 import { CollaboratorController } from "../controllers/CollaboratorController";
 import { CollaboratorService } from "../services/CollaboratorService";
 import { CollaboratorRepository } from "../repositories/CollaboratorRepository";
+import { restVerifyAdminToken } from "../middlewares/restVerifyAdminToken";
 
 export const collaboratorRoutes = Router();
 
@@ -10,7 +10,7 @@ const collaboratorRepository = new CollaboratorRepository();
 const collaboratorService = new CollaboratorService(collaboratorRepository);
 const collaboratorController = new CollaboratorController(collaboratorService);
 
-collaboratorRoutes.get("/", (request: Request, response: Response) =>
+collaboratorRoutes.get("/", restVerifyAdminToken, (request: Request, response: Response) =>
   collaboratorController.listAll(request, response),
 );
 collaboratorRoutes.post("/", (request: Request, response: Response) =>

@@ -1,12 +1,12 @@
 import { Router, Request, Response } from "express";
 import { AuthController } from "../controllers/AuthController";
 import { AuthService } from "../services/AuthService";
-import { UserRepository } from "../repositories/UserRepository";
+import { CollaboratorRepository } from "../repositories/CollaboratorRepository";
 
 export const authRoutes = Router();
 
-const userRepository = new UserRepository();
-const authService = new AuthService(userRepository);
+const collaboratorRepository = new CollaboratorRepository();
+const authService = new AuthService(collaboratorRepository);
 const authController = new AuthController(authService);
 
 authRoutes.post("/login", (request: Request, response: Response) => authController.login(request, response));

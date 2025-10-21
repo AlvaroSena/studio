@@ -5,4 +5,4 @@ import { authRoutes } from "./auth.routes";
 export const routes = Router();
 
 routes.use("/collaborators", collaboratorRoutes);
-// routes.use("/auth", authRoutes);
+routes.use("/auth", authRoutes);
