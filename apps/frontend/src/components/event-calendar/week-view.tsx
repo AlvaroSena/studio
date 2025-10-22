@@ -27,6 +27,7 @@ import {
   type CalendarEvent,
 } from "@/components/event-calendar";
 import { EndHour, StartHour } from "@/components/event-calendar/constants";
+import { ptBR } from "date-fns/locale";
 
 interface WeekViewProps {
   currentDate: Date;
@@ -219,7 +220,11 @@ export function WeekView({
     <div data-slot="week-view" className="flex h-full flex-col">
       <div className="bg-background/80 border-border/70 sticky top-0 z-30 grid grid-cols-8 border-b backdrop-blur-md">
         <div className="text-muted-foreground/70 py-2 text-center text-sm">
-          <span className="max-[479px]:sr-only">{format(new Date(), "O")}</span>
+          <span className="max-[479px]:sr-only">
+            {format(new Date(), "O", {
+              locale: ptBR,
+            })}
+          </span>
         </div>
         {days.map((day) => (
           <div
@@ -228,9 +233,20 @@ export function WeekView({
             data-today={isToday(day) || undefined}
           >
             <span className="sm:hidden" aria-hidden="true">
-              {format(day, "E")[0]} {format(day, "d")}
+              {
+                format(day, "E", {
+                  locale: ptBR,
+                })[0]
+              }{" "}
+              {format(day, "d", {
+                locale: ptBR,
+              })}
             </span>
-            <span className="max-sm:hidden">{format(day, "EEE dd")}</span>
+            <span className="max-sm:hidden">
+              {format(day, "EEE dd", {
+                locale: ptBR,
+              })}
+            </span>
           </div>
         ))}
       </div>
@@ -240,7 +256,7 @@ export function WeekView({
           <div className="grid grid-cols-8">
             <div className="border-border/70 relative border-r">
               <span className="text-muted-foreground/70 absolute bottom-0 left-0 h-6 w-16 max-w-full pe-2 text-right text-[10px] sm:pe-4 sm:text-xs">
-                All day
+                Todo
               </span>
             </div>
             {days.map((day, dayIndex) => {

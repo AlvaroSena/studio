@@ -99,7 +99,13 @@ export function MonthView({
             key={day}
             className="text-muted-foreground/70 py-2 text-center text-sm"
           >
-            {day}
+            {day === "Sun" && "Dom"}
+            {day === "Mon" && "Seg"}
+            {day === "Tue" && "Ter"}
+            {day === "Wed" && "Qua"}
+            {day === "Thu" && "Qui"}
+            {day === "Fri" && "Sex"}
+            {day === "Sat" && "Sab"}
           </div>
         ))}
       </div>

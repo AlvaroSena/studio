@@ -8,6 +8,7 @@ import {
   EventItem,
   getAgendaEventsForDay,
 } from "@/components/event-calendar";
+import { ptBR } from "date-fns/locale";
 
 interface AgendaViewProps {
   currentDate: Date;
@@ -67,7 +68,9 @@ export function AgendaView({
                 className="bg-background absolute -top-3 left-0 flex h-6 items-center pe-4 text-[10px] uppercase data-today:font-medium sm:pe-4 sm:text-xs"
                 data-today={isToday(day) || undefined}
               >
-                {format(day, "d MMM, EEEE")}
+                {format(day, "d MMM, EEEE", {
+                  locale: ptBR,
+                })}
               </span>
               <div className="mt-6 space-y-2">
                 {dayEvents.map((event) => (
