@@ -16,6 +16,12 @@ collaboratorRoutes.get("/", restVerifyAdminToken, (request: Request, response: R
 collaboratorRoutes.post("/", (request: Request, response: Response) =>
   collaboratorController.create(request, response),
 );
-// collaboratorRoutes.get("/:id", restVerifyAdminToken, userController.findById);
-// collaboratorRoutes.get("/profile/me", restVerifyAdminToken, userController.findMe);
-// collaboratorRoutes.delete("/delete/:id", restVerifyAdminToken, userController.deleteUser);
+collaboratorRoutes.get("/:id", restVerifyAdminToken, (request: Request, response: Response) =>
+  collaboratorController.getById(request, response),
+);
+collaboratorRoutes.get("/profile/me", restVerifyAdminToken, (request: Request, response: Response) =>
+  collaboratorController.getProfile(request, response),
+);
+collaboratorRoutes.delete("/delete/:id", restVerifyAdminToken, (request: Request, response: Response) =>
+  collaboratorController.delete(request, response),
+);

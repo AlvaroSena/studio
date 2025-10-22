@@ -1,4 +1,6 @@
+import { GetCollaboratorResponseDTO } from "../dtos/CollaboratorDTO";
 import { ConflictException } from "../exceptions/ConflictException";
+import { NotFoundException } from "../exceptions/NotFoundException";
 import { Collaborator } from "../models/Collaborator";
 import { ICollaboratorRepository } from "../repositories/ICollaboratorRepository";
 import { CollaboratorType } from "@shared/schemas/collaborator";
@@ -33,5 +35,32 @@ export class CollaboratorService {
     const createdCollaborator = await this.repository.save(collaborator);
 
     return createdCollaborator;
+  }
+
+  async getById(id: string): Promise<GetCollaboratorResponseDTO> {
+    const collaborator = await this.repository.findById(id);
+
+    if (!collaborator) {
+      throw new NotFoundException("Collaborator not found.");
+    }
+
+    return {
+      collaborator: {
+        id: collaborator.getId(),
+        name: collaborator.getName(),
+        photoUrl: collaborator.getPhotoUrl(),
+        role: collaborator.getRole(),
+      },
+    };
+  }
+
+  async remove(id: string): Promise<void> {
+    const collaborator = await this.repository.findById(id);
+
+    if (!collaborator) {
+      throw new NotFoundException("Collaborator not found.");
+    }
+
+    await this.repository.delete(id);
   }
 }

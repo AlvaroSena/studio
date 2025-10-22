@@ -18,4 +18,28 @@ export class CollaboratorController {
       userId: user.getId(),
     });
   }
+
+  async getById(request: Request, response: Response) {
+    const id = request.params.id;
+
+    const collaborator = await this.collaboratorService.getById(id);
+
+    return response.json(collaborator);
+  }
+
+  async getProfile(request: Request, response: Response) {
+    const { sub } = request.user as { sub: string };
+
+    const collaborator = await this.collaboratorService.getById(sub);
+
+    return response.json(collaborator);
+  }
+
+  async delete(request: Request, response: Response) {
+    const id = request.params.id;
+
+    await this.collaboratorService.remove(id);
+
+    return response.status(204).send();
+  }
 }

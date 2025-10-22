@@ -14,7 +14,12 @@ interface AuthContextProviderProps {
 }
 
 interface AuthContextType {
-  user: { id: string; name: string; role: string } | null;
+  user: {
+    id: string;
+    name: string;
+    photoUrl: string | null;
+    role: string;
+  } | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
@@ -69,8 +74,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   const fetchMe = async () => {
     try {
-      const res = await api.get("/users/profile/me");
-      setUser(res.data.user);
+      const res = await api.get("/collaborators/profile/me");
+      setUser(res.data.collaborator);
     } catch {
       setUser(null);
     }
