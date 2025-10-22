@@ -1,35 +1,64 @@
 {
-  "id": "01b2c616-9376-47ad-91e4-ef956490595f",
+  "id": "bd9d7738-26f5-4b66-b225-d48ba28a651c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.users": {
-      "name": "users",
+    "public.collaborators": {
+      "name": "collaborators",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "varchar(255)",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "name": {
           "name": "name",
-          "type": "text",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "photo_url": {
+          "name": "photo_url",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "regional_council": {
+          "name": "regional_council",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "birth_date": {
+          "name": "birth_date",
+          "type": "date",
           "primaryKey": false,
           "notNull": true
         },
         "email": {
           "name": "email",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hiring_date": {
+          "name": "hiring_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
         "password_hash": {
           "name": "password_hash",
-          "type": "text",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         },
@@ -59,11 +88,25 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "collaborators_regional_council_unique": {
+          "name": "collaborators_regional_council_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "regional_council"
+          ]
+        },
+        "collaborators_email_unique": {
+          "name": "collaborators_email_unique",
           "nullsNotDistinct": false,
           "columns": [
             "email"
+          ]
+        },
+        "collaborators_phone_number_unique": {
+          "name": "collaborators_phone_number_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone_number"
           ]
         }
       },
@@ -79,8 +122,7 @@
       "values": [
         "admin",
         "recepcionist",
-        "instructor",
-        "student"
+        "instructor"
       ]
     }
   },

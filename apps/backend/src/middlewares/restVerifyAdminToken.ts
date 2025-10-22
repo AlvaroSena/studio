@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRepository } from "../repositories/UserRepository";
+import { CollaboratorRepository } from "../repositories/CollaboratorRepository";
 import { verify } from "jsonwebtoken";
 
 interface Payload {
@@ -24,15 +24,15 @@ export async function restVerifyAdminToken(request: Request, reply: Response, ne
   try {
     const payload = verify(token, process.env.AUTH_SECRET!) as Payload;
 
-    const userRepository = new UserRepository();
+    const collaboratorRepository = new CollaboratorRepository();
 
-    const user = await userRepository.findById(payload.sub);
+    const collaborator = await collaboratorRepository.findById(payload.sub);
 
-    if (!user) {
+    if (!collaborator) {
       return reply.status(401).json({ message: "User not found" });
     }
 
-    if (user.getRole() !== "admin") {
+    if (collaborator.getRole() !== "admin") {
       return reply.status(401).json({ message: "Unauthorized" });
     }
 
