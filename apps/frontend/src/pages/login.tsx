@@ -1,9 +1,26 @@
-import { GalleryVerticalEnd } from "lucide-react";
+import { GalleryVerticalEnd, LockKeyhole } from "lucide-react";
 
 import { LoginForm } from "@/components/login-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { OTPForm } from "@/components/otp-form";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 
 export function Login() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const session = searchParams.get("session");
+
+  useEffect(() => {
+    // verifing if session has the correct length of characters
+    if (session && session.length < 36) {
+      navigate("/");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -19,22 +36,40 @@ export function Login() {
           <div className="w-full max-w-xs">
             <div className="flex flex-col items-center gap-1 text-center">
               <h1 className="text-2xl poppins-bold text-foreground">
-                Entre na sua conta
+                {!session ? "Entre na sua conta" : "Enviamos um email"}
               </h1>
               <p className="text-muted-foreground text-sm text-balance">
-                Digite seu email e senha para entrar na sua conta
+                {!session
+                  ? "Digite seu email e senha para entrar na sua conta"
+                  : "Digite o código enviado para seu email"}
               </p>
             </div>
-            <Tabs defaultValue="account" className="my-8 w-full">
-              <TabsList className="w-full">
-                <TabsTrigger value="account">Colaborador</TabsTrigger>
-                <TabsTrigger value="password">Aluno</TabsTrigger>
-              </TabsList>
-              <TabsContent value="account">
-                <LoginForm />
-              </TabsContent>
-              <TabsContent value="password">Cooming soon</TabsContent>
-            </Tabs>
+            {!session ? (
+              <Tabs defaultValue="collaborator" className="my-8 w-full">
+                <TabsList className="w-full">
+                  <TabsTrigger
+                    value="collaborator"
+                    className="poppins-medium text-foreground"
+                  >
+                    Colaborador
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="student"
+                    className="poppins-medium text-foreground"
+                    disabled
+                  >
+                    <LockKeyhole size={16} />
+                    Aluno
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="collaborator">
+                  <LoginForm />
+                </TabsContent>
+                <TabsContent value="student">Cooming soon</TabsContent>
+              </Tabs>
+            ) : (
+              <OTPForm />
+            )}
           </div>
         </div>
       </div>

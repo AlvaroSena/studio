@@ -7,7 +7,26 @@ export class AuthController {
   async login(request: Request, response: Response) {
     const body = request.body;
 
-    const { accessToken, refreshToken } = await this.authService.login(body.email, body.password);
+    // const { accessToken, refreshToken } = await this.authService.login(body.email, body.password);
+    const { userId } = await this.authService.login(body.email, body.password);
+
+    // response.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "lax",
+    //   maxAge: 1000 * 60 * 60,
+    // });
+
+    return response.status(201).json({
+      userId,
+    });
+  }
+
+  async verifyCode(request: Request, response: Response) {
+    const { userId } = request.params;
+    const { code } = request.body;
+
+    const { accessToken, refreshToken } = await this.authService.verifyCode(code, userId);
 
     response.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -16,7 +35,10 @@ export class AuthController {
       maxAge: 1000 * 60 * 60,
     });
 
-    return response.status(201).json({ accessToken, refreshToken });
+    return response.status(201).json({
+      accessToken,
+      refreshToken,
+    });
   }
 
   refresh(request: Request, response: Response) {

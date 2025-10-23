@@ -10,5 +10,8 @@ const authService = new AuthService(collaboratorRepository);
 const authController = new AuthController(authService);
 
 authRoutes.post("/login", (request: Request, response: Response) => authController.login(request, response));
+authRoutes.post("/verify/:userId", (request: Request, response: Response) =>
+  authController.verifyCode(request, response),
+);
 authRoutes.post("/refresh", (request: Request, response: Response) => authController.refresh(request, response));
 authRoutes.post("/logout", (request: Request, response: Response) => authController.logout(request, response));
