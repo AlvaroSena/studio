@@ -19,6 +19,7 @@ import {
 export function NavUser({
   user,
   logout,
+  isInHeader,
 }: {
   user: {
     name: string;
@@ -26,11 +27,12 @@ export function NavUser({
     avatar: string;
   };
   logout: () => void;
+  isInHeader?: boolean;
 }) {
   const { isMobile } = useSidebar();
 
   return (
-    <SidebarMenu>
+    <SidebarMenu className={isInHeader ? "md:hidden" : ""}>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -44,13 +46,15 @@ export function NavUser({
                   {user.name[0].concat(user.name[1].toUpperCase())}
                 </AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div
+                className={`grid flex-1 text-left text-sm leading-tight ${isInHeader && "hidden"}`}
+              >
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="text-muted-foreground truncate text-xs">
                   {user.role}
                 </span>
               </div>
-              <IconDotsVertical className="ml-auto size-4" />
+              {!isInHeader && <IconDotsVertical className="ml-auto size-4" />}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

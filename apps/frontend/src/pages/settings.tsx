@@ -1,3 +1,4 @@
+import { ModeToggle } from "@/components/mode-toggle";
 import { PhotoUpload } from "@/components/photo-upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,13 @@ export function Settings() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Label>Email</Label>
         <Input type="email" placeholder="Email" />
+      </div>
+
+      <Separator className="my-8" />
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Label>Aparência</Label>
+        <ModeToggle />
       </div>
 
       <Separator className="my-8" />

@@ -9,7 +9,6 @@ import {
   IconSettings,
   IconUsers,
   IconBriefcase,
-  IconBriefcase2,
   IconStretching,
 } from "@tabler/icons-react";
 
@@ -31,29 +30,29 @@ const data = {
   navMain: [
     {
       title: "Alunos",
-      url: "#",
+      url: "/students",
       icon: IconUsers,
     },
     {
       title: "Colaboradores",
-      url: "#",
+      url: "/collaborators",
       icon: IconBriefcase,
     },
     {
-      title: "Estúdios",
+      title: "Studios",
       url: "/studios",
       icon: IconStretching,
     },
     {
       title: "Aulas",
-      url: "#",
+      url: "/classes",
       icon: IconSchool,
     },
   ],
   navSecondary: [
     {
       title: "Planos",
-      url: "#",
+      url: "/plans",
       icon: IconCreditCard,
     },
     {
@@ -65,7 +64,7 @@ const data = {
   documents: [
     {
       name: "Relatórios",
-      url: "#",
+      url: "/reports",
       icon: IconReport,
     },
   ],

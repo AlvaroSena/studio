@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import { AppRoutes } from "./AppRoutes";
+import { AppRoutes } from "./app-routes";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
