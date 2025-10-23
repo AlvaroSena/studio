@@ -41,7 +41,7 @@ const data = {
     },
     {
       title: "Estúdios",
-      url: "#",
+      url: "/studios",
       icon: IconStretching,
     },
     {
@@ -58,7 +58,7 @@ const data = {
     },
     {
       title: "Configurações",
-      url: "#",
+      url: "/settings",
       icon: IconSettings,
     },
   ],
