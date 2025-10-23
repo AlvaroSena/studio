@@ -20,7 +20,11 @@ interface AuthContextType {
     photoUrl: string | null;
     role: string;
   } | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+  ) => Promise<{ userId?: string; error?: string }>;
+  verifyOTP: (code: string, userId: string) => Promise<string>;
   logout: () => Promise<void>;
   loading: boolean;
 }
@@ -54,16 +58,40 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
     try {
       const response = await api.post("/auth/login", { email, password });
+      const { userId } = response.data;
+
+      return {
+        userId,
+      };
+    } catch (err) {
+      if (isAxiosError(err) && err.status === 401) {
+        toast.error("Email ou senha incorreto.");
+      }
+
+      return {
+        error: "unauthorized",
+      };
+    }
+  };
+
+  const verifyOTP = async (code: string, userId: string) => {
+    try {
+      const response = await api.post(`/auth/verify/${userId}`, { code });
       const data = response.data;
+
       setAccessToken(data.accessToken);
       api.defaults.headers.common["Authorization"] =
         `Bearer ${data.accessToken}`;
 
       await fetchMe();
+
+      return "success";
     } catch (err) {
       if (isAxiosError(err) && err.status === 401) {
-        toast.error("Email ou senha incorreto.");
+        toast.error("Código inválido.");
       }
+
+      return "unauthorized";
     }
   };
 
@@ -86,7 +114,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ login, logout, user, loading }}>
+    <AuthContext.Provider value={{ login, verifyOTP, logout, user, loading }}>
       {children}
     </AuthContext.Provider>
   );

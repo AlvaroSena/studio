@@ -1,18 +1,13 @@
 import { useContext, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthContext } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { LoaderCircle } from "lucide-react";
 
 const loginFormSchema = z.object({
@@ -36,14 +31,19 @@ export function LoginForm({
     resolver: zodResolver(loginFormSchema),
   });
   const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [isFormBeingSubmitted, setIsFormBeingSubmitted] = useState(false);
+  const [, setSearchParams] = useSearchParams();
 
   const handleLogin = async ({ email, password }: LoginFormSchema) => {
     setIsFormBeingSubmitted(true);
-    await login(email, password);
+    const { userId } = await login(email, password);
     setIsFormBeingSubmitted(false);
-    navigate("/");
+
+    if (userId) {
+      setSearchParams({
+        session: userId,
+      });
+    }
   };
 
   return (
@@ -56,14 +56,14 @@ export function LoginForm({
         <Field>
           <FieldLabel
             htmlFor="email"
-            className="poppins-medium text-emerald-800"
+            className="poppins-medium text-emerald-800 dark:text-foreground"
           >
             Email
           </FieldLabel>
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder="Email"
             {...register("email")}
           />
           {errors.email && (
@@ -76,18 +76,23 @@ export function LoginForm({
           <div className="flex items-center">
             <FieldLabel
               htmlFor="password"
-              className="poppins-medium text-emerald-800"
+              className="poppins-medium  text-emerald-800 dark:text-foreground"
             >
               Senha
             </FieldLabel>
             <a
               href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline text-emerald-800"
+              className="ml-auto text-sm underline-offset-4 hover:underline text-emerald-800 dark:text-muted-foreground"
             >
               Esqueceu a senha?
             </a>
           </div>
-          <Input id="password" type="password" {...register("password")} />
+          <Input
+            id="password"
+            type="password"
+            placeholder="Senha"
+            {...register("password")}
+          />
           {errors.password && (
             <span className="text-xs text-red-600 poppins-medium">
               {errors.password.message}
@@ -102,17 +107,6 @@ export function LoginForm({
             {isFormBeingSubmitted && <LoaderCircle className="animate-spin" />}
             Entrar
           </Button>
-        </Field>
-        <Field>
-          <FieldDescription className="text-center">
-            Don&apos;t have an account?{" "}
-            <a
-              href="#"
-              className="underline underline-offset-4 text-emerald-800"
-            >
-              Cadastre-se
-            </a>
-          </FieldDescription>
         </Field>
       </FieldGroup>
     </form>
