@@ -366,7 +366,7 @@ export function EventCalendar({
               </DropdownMenuContent>
             </DropdownMenu>
             <Button
-              className="max-[479px]:aspect-square max-[479px]:p-0! bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
+              className="max-[479px]:aspect-square max-[479px]:p-0! text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
               onClick={() => {
                 setSelectedEvent(null); // Ensure we're creating a new event
                 setIsEventDialogOpen(true);
