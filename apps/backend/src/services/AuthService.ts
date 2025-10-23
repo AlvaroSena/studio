@@ -49,7 +49,7 @@ export class AuthService {
     if (process.env.NODE_ENV === "production") {
       await resend.emails.send({
         from: "Acme <onboarding@resend.dev>",
-        to: ["alvarosenacs.c@gmail.com"],
+        to: email,
         subject: "Código para Autenticação",
         html: `<strong>${code}</strong>`,
       });
