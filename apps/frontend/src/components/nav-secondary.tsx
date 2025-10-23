@@ -8,7 +8,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
 export function NavSecondary({
   items,
   ...props

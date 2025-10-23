@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import { Login } from "./pages/Login";
-import { Home } from "./pages/Home";
-import { Protected } from "./components/Protected";
-import { Admin } from "./pages/admin";
+import { Protected } from "@/components/protected";
+import { Layout } from "@/components/layout";
+import { Admin } from "@/pages/admin";
+import { Login } from "@/pages/Login";
 
 export function AppRoutes() {
   return (
@@ -11,7 +11,9 @@ export function AppRoutes() {
         path="/"
         element={
           <Protected>
-            <Admin />
+            <Layout>
+              <Admin />
+            </Layout>
           </Protected>
         }
       />

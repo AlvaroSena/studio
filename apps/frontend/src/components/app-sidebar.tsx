@@ -1,16 +1,16 @@
 import * as React from "react";
+import { useAuth } from "@/contexts/AuthContext";
+
 import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconFileAi,
-  IconFileDescription,
-  IconFolder,
+  IconSchool,
+  IconCreditCard,
   IconInnerShadowTop,
-  IconListDetails,
   IconReport,
   IconSettings,
   IconUsers,
+  IconBriefcase,
+  IconBriefcase2,
+  IconStretching,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -28,87 +28,34 @@ import {
 } from "@/components/ui/sidebar";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
-      title: "Dashboard",
+      title: "Alunos",
       url: "#",
-      icon: IconDashboard,
+      icon: IconUsers,
     },
     {
-      title: "Usuários",
+      title: "Colaboradores",
       url: "#",
-      icon: IconListDetails,
-    },
-    {
-      title: "Planos",
-      url: "#",
-      icon: IconChartBar,
+      icon: IconBriefcase,
     },
     {
       title: "Estúdios",
       url: "#",
-      icon: IconFolder,
+      icon: IconStretching,
     },
     {
       title: "Aulas",
       url: "#",
-      icon: IconUsers,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      icon: IconSchool,
     },
   ],
   navSecondary: [
+    {
+      title: "Planos",
+      url: "#",
+      icon: IconCreditCard,
+    },
     {
       title: "Configurações",
       url: "#",
@@ -125,6 +72,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user, logout } = useAuth();
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -148,7 +97,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser
+          user={{
+            name: user?.name ?? "",
+            role: user?.role ?? "",
+            avatar: user?.photoUrl ?? "",
+          }}
+          logout={() => logout()}
+        />
       </SidebarFooter>
     </Sidebar>
   );
