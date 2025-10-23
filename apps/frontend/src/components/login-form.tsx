@@ -53,14 +53,6 @@ export function LoginForm({
       {...props}
     >
       <FieldGroup>
-        <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl poppins-bold text-zinc-800">
-            Entre na sua conta
-          </h1>
-          <p className="text-muted-foreground text-sm text-balance">
-            Digite seu email e senha para entrar na sua conta
-          </p>
-        </div>
         <Field>
           <FieldLabel
             htmlFor="email"
@@ -105,7 +97,7 @@ export function LoginForm({
         <Field>
           <Button
             type="submit"
-            className="bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
+            className="text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
           >
             {isFormBeingSubmitted && <LoaderCircle className="animate-spin" />}
             Entrar
