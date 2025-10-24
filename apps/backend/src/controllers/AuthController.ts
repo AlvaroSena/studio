@@ -23,24 +23,13 @@ export class AuthController {
     const nodeEnv = process.env.NODE_ENV!;
     const maxAge = 1000 * 60 * 60 * 24 * 7;
 
-    if (nodeEnv === "production") {
-      response.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        domain: ".vercel.app",
-        path: "/",
-        maxAge,
-      });
-    } else {
-      response.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        path: "/",
-        maxAge,
-      });
-    }
+    response.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: nodeEnv === "production" ? true : false,
+      sameSite: "lax",
+      path: "/",
+      maxAge,
+    });
 
     return response.status(201).json({
       accessToken,

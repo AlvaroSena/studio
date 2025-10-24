@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "source": "/v1/(.*)",
+      "destination": "https://api-studio-omega.vercel.app/v1/$1"
     }
   ]
 }
