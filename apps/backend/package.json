@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts --env-file=.env"
+    "dev": "tsx watch src/server.ts --env-file=.env",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +37,7 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "resend": "^6.2.2"
+    "resend": "^6.2.2",
+    "serverless-http": "^4.0.0"
   }
 }
