@@ -1,5 +1,5 @@
 {
-  "id": "bd9d7738-26f5-4b66-b225-d48ba28a651c",
+  "id": "bc6c214a-9752-42f0-b511-6d62436e2beb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -64,7 +64,7 @@
         },
         "role": {
           "name": "role",
-          "type": "user_role",
+          "type": "collaborator_role",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -116,8 +116,8 @@
     }
   },
   "enums": {
-    "public.user_role": {
-      "name": "user_role",
+    "public.collaborator_role": {
+      "name": "collaborator_role",
       "schema": "public",
       "values": [
         "admin",

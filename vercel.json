@@ -1,0 +1,21 @@
+{
+  "projects": [
+    {
+      "src": "apps/frontend",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "pnpm build",
+        "outputDirectory": "dist",
+        "installCommand": "pnpm install --frozen-lockfile"
+      }
+    },
+    {
+      "src": "apps/backend",
+      "use": "@vercel/node",
+      "config": {
+        "buildCommand": "pnpm build",
+        "installCommand": "pnpm install --frozen-lockfile"
+      }
+    }
+  ]
+}
