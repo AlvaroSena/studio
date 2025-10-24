@@ -21,16 +21,16 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.verifyCode(code, userId);
 
     const nodeEnv = process.env.NODE_ENV!;
-    const domain = process.env.WEB_ORIGIN!;
+    const maxAge = 1000 * 60 * 60 * 24 * 7;
 
     if (nodeEnv === "production") {
       response.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        domain,
+        domain: ".vercel.app",
         path: "/",
-        maxAge: 1000 * 60 * 60 * 24 * 7,
+        maxAge,
       });
     } else {
       response.cookie("refreshToken", refreshToken, {
@@ -38,7 +38,7 @@ export class AuthController {
         secure: false,
         sameSite: "lax",
         path: "/",
-        maxAge: 1000 * 60 * 60 * 24 * 7,
+        maxAge,
       });
     }
 
