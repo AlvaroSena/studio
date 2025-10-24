@@ -25,4 +25,10 @@ app.use(limiter);
 app.use("/v1", routes);
 app.use(restExceptionHandler);
 
+app.get("/", (request, response) => {
+  return response.json({
+    message: "Hello, world",
+  });
+});
+
 export default app;
