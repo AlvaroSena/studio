@@ -1,10 +1,15 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.ts": {
-      "runtime": "nodejs20.x"
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
     }
-  },
-  "builds": [{ "src": "api/index.ts", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "api/index.ts" }]
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/server.ts"
+    }
+  ]
 }

@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts --env-file=.env",
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "dev": "tsx watch src/server.ts --env-file=.env"
   },
   "keywords": [],
   "author": "",

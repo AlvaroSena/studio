@@ -1,8 +1,13 @@
 {
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install --prefix ../../",
+  "framework": "vite",
   "rewrites": [
     {
-      "source": "/v1/(.*)",
-      "destination": "https://api-studio-omega.vercel.app/v1/$1"
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
