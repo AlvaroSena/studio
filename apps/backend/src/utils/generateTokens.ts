@@ -1,9 +1,9 @@
 import { sign } from "jsonwebtoken";
-import { UserRole } from "../models/UserModel";
+import { CollaboratorRole } from "../models/Collaborator";
 
 export interface UserPayload {
   sub: string;
-  role: UserRole;
+  role: CollaboratorRole;
 }
 
 export function generateTokens(user: UserPayload) {
