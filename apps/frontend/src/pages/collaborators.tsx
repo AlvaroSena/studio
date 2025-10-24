@@ -1,9 +1,7 @@
-import { CollaboratorsTable } from "@/components/collaborators-table";
-
 export function Collaborators() {
   return (
     <div className="mx-8">
-      <CollaboratorsTable />
+      <h1>collaborators</h1>
     </div>
   );
 }

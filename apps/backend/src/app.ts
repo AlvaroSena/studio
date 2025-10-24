@@ -6,7 +6,7 @@ import { restExceptionHandler } from "./middlewares/restExceptionHandler";
 
 import RateLimit from "express-rate-limit";
 
-export const app = express();
+const app = express();
 app.use(
   cors({
     origin: process.env.WEB_ORIGIN!,
@@ -24,3 +24,5 @@ const limiter = RateLimit({
 app.use(limiter);
 app.use("/v1", routes);
 app.use(restExceptionHandler);
+
+export default app;

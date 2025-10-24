@@ -6,9 +6,11 @@ interface Payload {
   sub: string;
 }
 
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: Payload;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: Payload;
+    }
   }
 }
 

@@ -6,8 +6,7 @@
   "license": "ISC",
   "description": "Este repositório contém o desenvolvimento do MVP (Minimum Viable Product) de um sistema de gestão para estúdios de Pilates, criado como parte de um projeto acadêmico da faculdade.",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ],
   "devDependencies": {
     "@types/node": "^24.7.0",
