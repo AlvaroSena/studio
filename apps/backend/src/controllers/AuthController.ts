@@ -7,15 +7,7 @@ export class AuthController {
   async login(request: Request, response: Response) {
     const body = request.body;
 
-    // const { accessToken, refreshToken } = await this.authService.login(body.email, body.password);
     const { userId } = await this.authService.login(body.email, body.password);
-
-    // response.cookie("refreshToken", refreshToken, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   sameSite: "lax",
-    //   maxAge: 1000 * 60 * 60,
-    // });
 
     return response.status(201).json({
       userId,
@@ -28,12 +20,27 @@ export class AuthController {
 
     const { accessToken, refreshToken } = await this.authService.verifyCode(code, userId);
 
-    response.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 1000 * 60 * 60,
-    });
+    const nodeEnv = process.env.NODE_ENV!;
+    const domain = process.env.WEB_ORIGIN!;
+
+    if (nodeEnv === "production") {
+      response.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        domain,
+        path: "/",
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      });
+    } else {
+      response.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      });
+    }
 
     return response.status(201).json({
       accessToken,
