@@ -3,7 +3,7 @@ import { ConflictException } from "../exceptions/ConflictException";
 import { NotFoundException } from "../exceptions/NotFoundException";
 import { Collaborator } from "../models/Collaborator";
 import { ICollaboratorRepository } from "../repositories/ICollaboratorRepository";
-import { CollaboratorType } from "@shared/schemas/collaborator";
+import { CollaboratorType } from "../schemas/collaboratorSchema";
 import { hash } from "bcryptjs";
 
 export class CollaboratorService {
