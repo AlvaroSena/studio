@@ -20,10 +20,7 @@ interface AuthContextType {
     photoUrl: string | null;
     role: string;
   } | null;
-  login: (
-    email: string,
-    password: string,
-  ) => Promise<{ userId?: string; error?: string }>;
+  login: (email: string, password: string) => Promise<string | undefined>;
   verifyOTP: (code: string, userId: string) => Promise<string>;
   logout: () => Promise<void>;
   loading: boolean;
@@ -58,19 +55,13 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
     try {
       const response = await api.post("/auth/login", { email, password });
-      const { userId } = response.data;
+      const { userId }: { userId: string } = response.data;
 
-      return {
-        userId,
-      };
+      return userId;
     } catch (err) {
       if (isAxiosError(err) && err.status === 401) {
         toast.error("Email ou senha incorreto.");
       }
-
-      return {
-        error: "unauthorized",
-      };
     }
   };
 

@@ -1,14 +1,14 @@
 import { useContext, useState } from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
+import { AuthContext } from "@/contexts/AuthContext";
+import { LoaderCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthContext } from "@/contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
-import { LoaderCircle } from "lucide-react";
+import { z } from "zod";
 
 const loginFormSchema = z.object({
   email: z.email({ message: "Insira um email inválido" }),
@@ -36,7 +36,7 @@ export function LoginForm({
 
   const handleLogin = async ({ email, password }: LoginFormSchema) => {
     setIsFormBeingSubmitted(true);
-    const { userId } = await login(email, password);
+    const userId = await login(email, password);
     setIsFormBeingSubmitted(false);
 
     if (userId) {
