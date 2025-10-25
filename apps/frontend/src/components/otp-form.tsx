@@ -27,7 +27,7 @@ export function OTPForm() {
           setTimeout(() => {
             setIsLoading(false);
             navigate("/");
-          }, 1500);
+          }, 3000);
         } else {
           setIsLoading(false);
           setValue("");

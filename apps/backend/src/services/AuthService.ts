@@ -100,6 +100,7 @@ export class AuthService {
 
   refresh(token: string) {
     const payload = verify(token, process.env.AUTH_SECRET!) as CollaboratorPayloadDTO;
+
     const { accessToken, refreshToken } = generateTokens({
       sub: payload.sub,
       role: payload.role,

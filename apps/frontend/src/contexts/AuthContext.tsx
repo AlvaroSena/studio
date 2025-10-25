@@ -22,7 +22,7 @@ interface AuthContextType {
   } | null;
   login: (email: string, password: string) => Promise<string | undefined>;
   verifyOTP: (code: string, userId: string) => Promise<string>;
-  logout: () => Promise<void>;
+  logout: () => void;
   loading: boolean;
 }
 
@@ -35,10 +35,6 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   const refresh = async () => {
     try {
-      const res = await api.post("/auth/refresh");
-      setAccessToken(res.data.accessToken);
-      api.defaults.headers.common["Authorization"] =
-        `Bearer ${res.data.accessToken}`;
       await fetchMe();
       setLoading(false);
     } catch {
@@ -70,9 +66,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       const response = await api.post(`/auth/verify/${userId}`, { code });
       const data = response.data;
 
-      setAccessToken(data.accessToken);
-      api.defaults.headers.common["Authorization"] =
-        `Bearer ${data.accessToken}`;
+      localStorage.setItem("refreshToken", data.refreshToken);
 
       await fetchMe();
 
@@ -86,8 +80,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   };
 
-  const logout = async () => {
-    await api.post("/auth/logout");
+  const logout = () => {
+    localStorage.removeItem("refreshToken");
+    // await api.post("/auth/logout");
     setUser(null);
   };
 

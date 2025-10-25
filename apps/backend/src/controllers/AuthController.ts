@@ -20,16 +20,16 @@ export class AuthController {
 
     const { accessToken, refreshToken } = await this.authService.verifyCode(code, userId);
 
-    const nodeEnv = process.env.NODE_ENV!;
-    const maxAge = 1000 * 60 * 60 * 24 * 7;
+    // const nodeEnv = process.env.NODE_ENV!;
+    // const maxAge = 1000 * 60 * 60 * 24 * 7;
 
-    response.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: nodeEnv === "production" ? true : false,
-      sameSite: "lax",
-      path: "/",
-      maxAge,
-    });
+    // response.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   secure: nodeEnv === "production" ? true : false,
+    //   sameSite: "lax",
+    //   path: "/",
+    //   maxAge,
+    // });
 
     return response.status(201).json({
       accessToken,
@@ -38,7 +38,7 @@ export class AuthController {
   }
 
   refresh(request: Request, response: Response) {
-    const token = request.cookies.refreshToken;
+    const token = request.body.token;
 
     if (!token) {
       return response.sendStatus(401);
@@ -47,14 +47,14 @@ export class AuthController {
     try {
       const { accessToken, refreshToken } = this.authService.refresh(token);
 
-      response.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        path: "/",
-      });
+      // response.cookie("refreshToken", refreshToken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "strict",
+      //   path: "/",
+      // });
 
-      return response.status(201).json({ accessToken });
+      return response.status(201).json({ accessToken, refreshToken });
     } catch (err) {
       console.log(err);
     }
