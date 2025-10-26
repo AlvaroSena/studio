@@ -111,4 +111,76 @@ export class AuthService {
       refreshToken,
     };
   }
+
+  async forgotPassword(email: string) {
+    const user = await this.collaboratorRepository.findByEmail(email);
+
+    if (!user) {
+      throw new InvalidCredentialsException("E-mail is incorrect.");
+    }
+
+    const code = generateNumericOtp();
+    const hashed = hashOtp(email, code);
+
+    const key = `otp:${email.toLocaleLowerCase()}`;
+
+    await redis.hmset(key, { hash: hashed, attempts: MAX_ATTEMPTS });
+    await redis.expire(key, OTP_TTL);
+
+    await redis.hset(key, {
+      hash: hashOtp(email, code),
+      attempts: 3,
+    });
+
+    if (process.env.NODE_ENV === "development") {
+      console.log({
+        OTPCode: code,
+      });
+    }
+
+    if (process.env.NODE_ENV === "production") {
+      await resend.emails.send({
+        from: "Acme <onboarding@resend.dev>",
+        to: email,
+        subject: "Código para Recuperação de Senha",
+        html: `<strong>${code}</strong>`,
+      });
+    }
+  }
+
+  async resetPassword(email: string, code: string, password: string) {
+    const user = await this.collaboratorRepository.findByEmail(email);
+
+    if (!user) {
+      throw new InvalidCredentialsException("E-mail is incorrect.");
+    }
+
+    const key = `otp:${email.toLocaleLowerCase()}`;
+    const data = await redis.hgetall(key);
+
+    if (!data) {
+      throw new InvalidCredentialsException("OTP is invalid.");
+    }
+
+    const attemptsLeft = parseInt(data.attempts);
+
+    if (attemptsLeft <= 0) {
+      await redis.del(key);
+    }
+
+    const hashed = hashOtp(email, code);
+    if (hashed !== data.hash) {
+      await redis.hincrby(key, "attempts", -1);
+      throw new InvalidCredentialsException("Invalid code.");
+    }
+
+    await redis.del(key); // OTP usado com sucesso
+
+    const { accessToken, refreshToken } = generateTokens({ sub: user.getId(), role: user.getRole() });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
 }

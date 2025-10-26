@@ -12,10 +12,10 @@ import { LoaderCircle } from "lucide-react";
 
 export function OTPForm() {
   const [value, setValue] = useState("");
-  const { verifyOTP } = useAuth();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { verifyOTP } = useAuth();
+  const navigate = useNavigate();
 
   const session = searchParams.get("session");
 
@@ -24,10 +24,8 @@ export function OTPForm() {
       setIsLoading(true);
       verifyOTP(value, session ?? "").then((status) => {
         if (status === "success") {
-          setTimeout(() => {
-            setIsLoading(false);
-            navigate("/");
-          }, 3000);
+          setIsLoading(false);
+          navigate("/");
         } else {
           setIsLoading(false);
           setValue("");

@@ -20,17 +20,6 @@ export class AuthController {
 
     const { accessToken, refreshToken } = await this.authService.verifyCode(code, userId);
 
-    // const nodeEnv = process.env.NODE_ENV!;
-    // const maxAge = 1000 * 60 * 60 * 24 * 7;
-
-    // response.cookie("refreshToken", refreshToken, {
-    //   httpOnly: true,
-    //   secure: nodeEnv === "production" ? true : false,
-    //   sameSite: "lax",
-    //   path: "/",
-    //   maxAge,
-    // });
-
     return response.status(201).json({
       accessToken,
       refreshToken,
@@ -47,21 +36,17 @@ export class AuthController {
     try {
       const { accessToken, refreshToken } = this.authService.refresh(token);
 
-      // response.cookie("refreshToken", refreshToken, {
-      //   httpOnly: true,
-      //   secure: false,
-      //   sameSite: "strict",
-      //   path: "/",
-      // });
-
       return response.status(201).json({ accessToken, refreshToken });
     } catch (err) {
       console.log(err);
     }
   }
 
-  async logout(request: Request, response: Response) {
-    response.clearCookie("refreshToken");
+  async forgotPassword(request: Request, response: Response) {
+    const { email } = request.body;
+
+    await this.authService.forgotPassword(email);
+
     return response.status(204).send();
   }
 }

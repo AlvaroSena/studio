@@ -64,10 +64,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const verifyOTP = async (code: string, userId: string) => {
     try {
       const response = await api.post(`/auth/verify/${userId}`, { code });
-      const data = response.data;
+      const data: { accessToken: string, refreshToken: string } = response.data;
 
       localStorage.setItem("refreshToken", data.refreshToken);
-
+      api.defaults.headers.Authorization = `bearer ${data.accessToken}`;
       await fetchMe();
 
       return "success";
@@ -82,7 +82,6 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   const logout = () => {
     localStorage.removeItem("refreshToken");
-    // await api.post("/auth/logout");
     setUser(null);
   };
 
