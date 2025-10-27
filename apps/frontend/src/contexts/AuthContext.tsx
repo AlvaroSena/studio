@@ -37,6 +37,16 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   const refresh = async () => {
     try {
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      const res = await api.post("/auth/refresh", {
+        token: refreshToken,
+      });
+
+      const newAccess = res.data.accessToken;
+
+      api.defaults.headers.Authorization = `bearer ${newAccess}`;
+
       await fetchMe();
       setLoading(false);
     } catch {
