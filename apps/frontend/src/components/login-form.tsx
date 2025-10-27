@@ -4,11 +4,11 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AuthContext } from "@/contexts/AuthContext";
 import { LoaderCircle } from "lucide-react";
+import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "react-router-dom";
-import { z } from "zod";
+import { Link, useSearchParams } from "react-router-dom";
 
 const loginFormSchema = z.object({
   email: z.email({ message: "Insira um email inválido" }),
@@ -80,12 +80,12 @@ export function LoginForm({
             >
               Senha
             </FieldLabel>
-            <a
-              href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline text-emerald-800 dark:text-muted-foreground"
+            <Link
+              to="/forgot-password"
+              className="ml-auto text-sm underline-offset-4 hover:underline text-muted-foreground dark:text-muted-foreground"
             >
-              Esqueceu a senha?
-            </a>
+              Esqueci a senha
+            </Link>
           </div>
           <Input
             id="password"

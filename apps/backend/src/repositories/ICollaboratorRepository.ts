@@ -6,5 +6,6 @@ export interface ICollaboratorRepository {
   findById(id: string): Promise<Collaborator | null>;
   findByEmail(email: string): Promise<Collaborator | null>;
   update(collaborator: Collaborator): Promise<Collaborator>;
+  updatePassword(id: string, password: string): Promise<void>;
   delete(id: string): Promise<void>;
 }

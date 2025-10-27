@@ -22,7 +22,9 @@ interface AuthContextType {
   } | null;
   login: (email: string, password: string) => Promise<string | undefined>;
   verifyOTP: (code: string, userId: string) => Promise<string>;
-  logout: () => Promise<void>;
+  logout: () => void;
+  forgotPassword: (email: string) => Promise<string>;
+  resetPassword: (email: string, token: string, newPassword: string) => Promise<string>;
   loading: boolean;
 }
 
@@ -35,10 +37,6 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   const refresh = async () => {
     try {
-      const res = await api.post("/auth/refresh");
-      setAccessToken(res.data.accessToken);
-      api.defaults.headers.common["Authorization"] =
-        `Bearer ${res.data.accessToken}`;
       await fetchMe();
       setLoading(false);
     } catch {
@@ -68,12 +66,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const verifyOTP = async (code: string, userId: string) => {
     try {
       const response = await api.post(`/auth/verify/${userId}`, { code });
-      const data = response.data;
+      const data: { accessToken: string, refreshToken: string } = response.data;
 
-      setAccessToken(data.accessToken);
-      api.defaults.headers.common["Authorization"] =
-        `Bearer ${data.accessToken}`;
-
+      localStorage.setItem("refreshToken", data.refreshToken);
+      api.defaults.headers.Authorization = `bearer ${data.accessToken}`;
       await fetchMe();
 
       return "success";
@@ -86,9 +82,39 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   };
 
-  const logout = async () => {
-    await api.post("/auth/logout");
+  const logout = () => {
+    localStorage.removeItem("refreshToken");
     setUser(null);
+  };
+
+  const forgotPassword = async (email: string) => {
+    try {
+      await api.post("/auth/forgot-password", { email });
+      toast.success("Email enviado com sucesso!");
+
+      return "success"
+    } catch (err) {
+      if (isAxiosError(err) && err.status === 401) {
+        toast.error("Email não encontrado.");
+      }
+
+      return "failed"
+    }
+  };
+
+  const resetPassword = async (email: string, token: string, newPassword: string) => {
+    try {
+      await api.post("/auth/forgot-password/reset", { email, token, password: newPassword });
+      toast.success("Senha alterada com sucesso!");
+
+      return "success"
+    } catch (err) {
+      if (isAxiosError(err) && err.status === 401) {
+        toast.error("Email não encontrado.");
+      }
+
+      return "failed"
+    }
   };
 
   const fetchMe = async () => {
@@ -105,7 +131,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ login, verifyOTP, logout, user, loading }}>
+    <AuthContext.Provider value={{ login, verifyOTP, logout, forgotPassword, resetPassword, user, loading }}>
       {children}
     </AuthContext.Provider>
   );

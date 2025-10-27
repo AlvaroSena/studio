@@ -102,6 +102,10 @@ export class CollaboratorRepository implements ICollaboratorRepository {
     throw new Error("Method not implemented.");
   }
 
+  async updatePassword(id: string, password: string): Promise<void> {
+    await db.update(collaborators).set({ password }).where(eq(collaborators.id, id));
+  }
+
   async delete(id: string): Promise<void> {
     await db.delete(collaborators).where(eq(collaborators.id, id));
   }
