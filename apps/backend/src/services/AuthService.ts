@@ -1,11 +1,12 @@
 import { InvalidCredentialsException } from "../exceptions/InvalidCredentialsException";
 import { ICollaboratorRepository } from "../repositories/ICollaboratorRepository";
 import { CollaboratorRole } from "../models/Collaborator";
-import { compare } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 import { generateTokens } from "../utils/generateTokens";
 import { verify } from "jsonwebtoken";
 import { resend } from "../utils/resend";
 import { generateNumericOtp, hashOtp } from "../utils/otp";
+import { generatePasswordResetToken } from "../utils/generatePasswordResetToken";
 import redis from "../utils/redis";
 
 const OTP_TTL = 10 * 60; // 10 minutos
@@ -119,22 +120,19 @@ export class AuthService {
       throw new InvalidCredentialsException("E-mail is incorrect.");
     }
 
-    const code = generateNumericOtp();
-    const hashed = hashOtp(email, code);
+    const passwordResetToken = generatePasswordResetToken();
+    const hashed = await hash(passwordResetToken, 6);
 
     const key = `otp:${email.toLocaleLowerCase()}`;
 
     await redis.hmset(key, { hash: hashed, attempts: MAX_ATTEMPTS });
     await redis.expire(key, OTP_TTL);
 
-    await redis.hset(key, {
-      hash: hashOtp(email, code),
-      attempts: 3,
-    });
+    const resetUrl = `${process.env.WEB_ORIGIN}/reset-password?token=${passwordResetToken}&email=${email}`;
 
     if (process.env.NODE_ENV === "development") {
       console.log({
-        OTPCode: code,
+        url: resetUrl,
       });
     }
 
@@ -142,13 +140,13 @@ export class AuthService {
       await resend.emails.send({
         from: "Acme <onboarding@resend.dev>",
         to: email,
-        subject: "Código para Recuperação de Senha",
-        html: `<strong>${code}</strong>`,
+        subject: "Link para Recuperação de Senha",
+        html: `<strong>${resetUrl}</strong>`,
       });
     }
   }
 
-  async resetPassword(email: string, code: string, password: string) {
+  async resetPassword(email: string, passwordResetToken: string, newPassword: string) {
     const user = await this.collaboratorRepository.findByEmail(email);
 
     if (!user) {
@@ -159,28 +157,27 @@ export class AuthService {
     const data = await redis.hgetall(key);
 
     if (!data) {
-      throw new InvalidCredentialsException("OTP is invalid.");
+      throw new InvalidCredentialsException("Invalid token");
     }
 
-    const attemptsLeft = parseInt(data.attempts);
+    const attemptsLeft = Number(data.attempts);
 
     if (attemptsLeft <= 0) {
       await redis.del(key);
     }
 
-    const hashed = hashOtp(email, code);
-    if (hashed !== data.hash) {
+    const hashed = data.hash as unknown as string;
+
+    const hashedTokenMatch = await compare(passwordResetToken, hashed);
+    if (!hashedTokenMatch) {
       await redis.hincrby(key, "attempts", -1);
-      throw new InvalidCredentialsException("Invalid code.");
+      throw new InvalidCredentialsException("Invalid token.");
     }
 
     await redis.del(key); // OTP usado com sucesso
 
-    const { accessToken, refreshToken } = generateTokens({ sub: user.getId(), role: user.getRole() });
+    const newHashedPassword = await hash(newPassword, 12);
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+    await this.collaboratorRepository.updatePassword(user.getId(), newHashedPassword);
   }
 }

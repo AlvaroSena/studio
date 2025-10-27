@@ -14,7 +14,7 @@ export function Login() {
 
   useEffect(() => {
     // verifing if session has the correct length of characters
-    if (session && session.length < 36) {
+    if (session && (session.length < 36 || session.length > 36)) {
       navigate("/");
     }
 

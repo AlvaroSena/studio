@@ -23,6 +23,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<string | undefined>;
   verifyOTP: (code: string, userId: string) => Promise<string>;
   logout: () => void;
+  forgotPassword: (email: string) => Promise<string>;
+  resetPassword: (email: string, token: string, newPassword: string) => Promise<string>;
   loading: boolean;
 }
 
@@ -85,6 +87,36 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     setUser(null);
   };
 
+  const forgotPassword = async (email: string) => {
+    try {
+      await api.post("/auth/forgot-password", { email });
+      toast.success("Email enviado com sucesso!");
+
+      return "success"
+    } catch (err) {
+      if (isAxiosError(err) && err.status === 401) {
+        toast.error("Email não encontrado.");
+      }
+
+      return "failed"
+    }
+  };
+
+  const resetPassword = async (email: string, token: string, newPassword: string) => {
+    try {
+      await api.post("/auth/forgot-password/reset", { email, token, password: newPassword });
+      toast.success("Senha alterada com sucesso!");
+
+      return "success"
+    } catch (err) {
+      if (isAxiosError(err) && err.status === 401) {
+        toast.error("Email não encontrado.");
+      }
+
+      return "failed"
+    }
+  };
+
   const fetchMe = async () => {
     try {
       const res = await api.get("/collaborators/profile/me");
@@ -99,7 +131,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ login, verifyOTP, logout, user, loading }}>
+    <AuthContext.Provider value={{ login, verifyOTP, logout, forgotPassword, resetPassword, user, loading }}>
       {children}
     </AuthContext.Provider>
   );

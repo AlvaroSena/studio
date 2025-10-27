@@ -49,4 +49,12 @@ export class AuthController {
 
     return response.status(204).send();
   }
+
+  async resetPassword(request: Request, response: Response) {
+    const { email, token, password } = request.body;
+
+    await this.authService.resetPassword(email, token, password);
+
+    return response.status(204).send();
+  }
 }

@@ -17,3 +17,6 @@ authRoutes.post("/refresh", (request: Request, response: Response) => authContro
 authRoutes.post("/forgot-password", (request: Request, response: Response) =>
   authController.forgotPassword(request, response),
 );
+authRoutes.post("/forgot-password/reset", (request: Request, response: Response) =>
+  authController.resetPassword(request, response),
+);
