@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { AuthLayout } from "@/components/auth-layout";
 import { Protected } from "@/components/protected";
 import { Layout } from "@/components/layout";
 import { Admin } from "@/pages/admin";
@@ -7,8 +8,8 @@ import { Studios } from "@/pages/studios";
 import { Settings } from "@/pages/settings";
 import { StudioAgenda } from "@/pages/studios/studio-agenda";
 import { Collaborators } from "@/pages/collaborators";
-import { ForgotPassword } from "./pages/forgot-password";
-import { ResetPassword } from "./pages/reset-password";
+import { ForgotPassword } from "@/pages/forgot-password";
+import { ResetPassword } from "@/pages/reset-password";
 
 export function AppRoutes() {
   return (
@@ -63,9 +64,30 @@ export function AppRoutes() {
           </Protected>
         }
       />
-      <Route path="/login" element={<Login />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route 
+        path="/login" 
+        element={
+          <AuthLayout>
+            <Login />
+          </AuthLayout>
+        } 
+      />
+      <Route 
+        path="/forgot-password" 
+        element={
+          <AuthLayout>
+            <ForgotPassword />
+          </AuthLayout>
+        } 
+      />
+      <Route 
+        path="/reset-password" 
+        element={
+          <AuthLayout>
+            <ResetPassword />
+          </AuthLayout>
+        } 
+      />
     </Routes>
   );
 }
