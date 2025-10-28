@@ -3,6 +3,7 @@ import { CollaboratorController } from "../controllers/CollaboratorController";
 import { CollaboratorService } from "../services/CollaboratorService";
 import { CollaboratorRepository } from "../repositories/CollaboratorRepository";
 import { restVerifyAdminToken } from "../middlewares/restVerifyAdminToken";
+import { upload } from "../utils/upload";
 
 export const collaboratorRoutes = Router();
 
@@ -24,4 +25,10 @@ collaboratorRoutes.get("/profile/me", restVerifyAdminToken, (request: Request, r
 );
 collaboratorRoutes.delete("/delete/:id", restVerifyAdminToken, (request: Request, response: Response) =>
   collaboratorController.delete(request, response),
+);
+collaboratorRoutes.patch(
+  "/upload", 
+  upload.single("photo"), 
+  (request: Request, response: Response) => 
+  collaboratorController.upload(request, response),
 );
