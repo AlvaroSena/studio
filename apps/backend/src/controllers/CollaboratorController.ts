@@ -44,10 +44,10 @@ export class CollaboratorController {
   }
 
   async upload(request: Request, response: Response) {
-    // const { sub } = request.user as { sub: string };
+    const { sub } = request.user as { sub: string };
     const file = request.file as Express.Multer.File;
 
-    const url = await this.collaboratorService.upload("5a2bf4cc-443f-47b9-b2e4-fc79f83312f1", file);
-    return response.status(201).json({ url })
+    await this.collaboratorService.upload(sub, file);
+    return response.status(204).send();
   }
 }

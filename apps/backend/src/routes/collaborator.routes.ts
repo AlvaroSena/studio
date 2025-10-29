@@ -29,6 +29,7 @@ collaboratorRoutes.delete("/delete/:id", restVerifyAdminToken, (request: Request
 collaboratorRoutes.patch(
   "/upload", 
   upload.single("photo"), 
+  restVerifyAdminToken,
   (request: Request, response: Response) => 
   collaboratorController.upload(request, response),
 );

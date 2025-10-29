@@ -65,7 +65,7 @@ export class CollaboratorService {
     await this.repository.delete(id);
   }
 
-  async upload(id: string, file: Express.Multer.File): Promise<string> {
+  async upload(id: string, file: Express.Multer.File): Promise<void> {
     const bucketName = process.env.AWS_BUCKET!;
     const collaborator = await this.repository.findById(id);
 
@@ -74,11 +74,12 @@ export class CollaboratorService {
     }
 
     const collaboratorExistingPhoto = collaborator.getPhotoUrl();
+    const folderName = "avatars";
 
     if (collaboratorExistingPhoto) {
       const splitedUrl = collaboratorExistingPhoto.split("/");
       
-      const key = `avatars/${splitedUrl[splitedUrl.length - 1]}`;
+      const key = `${folderName}/${splitedUrl[splitedUrl.length - 1]}`;
 
       await s3.deleteObject({
         Bucket: bucketName,
@@ -86,17 +87,17 @@ export class CollaboratorService {
       }).promise();
     }
 
-    const key = `avatars/${collaborator.getId()}-${file.originalname}`;
+    const newKey = `${folderName}/${collaborator.getId()}-${file.originalname}`;
 
     await s3.upload({
       Bucket: bucketName,
-      Key: key,
+      Key: newKey,
       Body: file.buffer,
       ContentType: file.mimetype,
     }).promise();
 
-    const url = `https://${bucketName}.s3.${process.env.AWS_REGION!}.amazonaws.com/${key}`;
+    const uploadUrl = `https://${bucketName}.s3.${process.env.AWS_REGION!}.amazonaws.com/${newKey}`;
 
-    return url;
+    await this.repository.updatePhotoUrl(collaborator.getId(), uploadUrl);
   }
 }
