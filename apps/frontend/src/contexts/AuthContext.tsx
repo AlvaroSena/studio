@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { api } from "@/lib/api";
 import { isAxiosError } from "axios";
 import {
@@ -25,6 +26,7 @@ interface AuthContextType {
   logout: () => void;
   forgotPassword: (email: string) => Promise<string>;
   resetPassword: (email: string, token: string, newPassword: string) => Promise<string>;
+  fetchMe: () => void;
   loading: boolean;
 }
 
@@ -141,7 +143,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ login, verifyOTP, logout, forgotPassword, resetPassword, user, loading }}>
+    <AuthContext.Provider value={{ login, verifyOTP, logout, forgotPassword, resetPassword, fetchMe, user, loading }}>
       {children}
     </AuthContext.Provider>
   );

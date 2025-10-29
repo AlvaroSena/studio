@@ -1,9 +1,16 @@
-import { CircleUserRoundIcon, XIcon } from "lucide-react";
+import { useState } from "react";
+import { CircleUserRoundIcon, XIcon, UploadCloudIcon } from "lucide-react";
 
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
+import { Progress } from "./ui/progress";
+import { toast } from "sonner";
 
 export function PhotoUpload() {
+  const { fetchMe } = useAuth();
+
   const [
     { files, isDragging },
     {
@@ -19,7 +26,43 @@ export function PhotoUpload() {
     accept: "image/*",
   });
 
+  const [progress, setProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const previewUrl = files[0]?.preview || null;
+  const file = files[0]?.file || null;
+
+  async function handleUpload() {
+    if (!file) {
+      return;
+    }
+    
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("photo", file as File);
+
+      await api.patch("/collaborators/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (event) => {
+          if (event.total) {
+            const percent = Math.round((event.loaded * 100) / event.total);
+            setProgress(percent);
+          }
+        },
+      });
+
+      toast.success("Foto alterada com sucesso!");
+
+      fetchMe();
+
+    } catch (err) {
+      toast.error("Erro ao enviar foto. Tente mais tarde.");
+      console.error(err);
+    } finally {
+      setIsUploading(false);
+    }
+  }
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -50,6 +93,7 @@ export function PhotoUpload() {
             </div>
           )}
         </button>
+
         {previewUrl && (
           <Button
             onClick={() => removeFile(files[0]?.id)}
@@ -67,13 +111,25 @@ export function PhotoUpload() {
           tabIndex={-1}
         />
       </div>
-      <p
-        aria-live="polite"
-        role="region"
-        className="mt-2 text-xs text-muted-foreground"
-      >
+
+      <p className="mt-2 text-xs text-muted-foreground">
         Selecione ou arraste e solte uma foto de perfil
       </p>
+
+      {/* Botão de upload */}
+      {file && (
+        <Button
+          onClick={handleUpload}
+          disabled={isUploading}
+          className="mt-2 flex items-center gap-1 bg-emerald-800 dark:text-foreground hover:bg-emerald-900 poppins-medium"
+        >
+          <UploadCloudIcon className="size-4" />
+          {isUploading ? `Enviando... ${progress}%` : "Enviar"}
+        </Button>
+      )}
+      {isUploading && (
+        <Progress value={progress} />
+      )}
     </div>
   );
 }

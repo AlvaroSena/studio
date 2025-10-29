@@ -106,6 +106,10 @@ export class CollaboratorRepository implements ICollaboratorRepository {
     await db.update(collaborators).set({ password }).where(eq(collaborators.id, id));
   }
 
+  async updatePhotoUrl(id: string, url: string): Promise<void> {
+    await db.update(collaborators).set({ photoUrl: url }).where(eq(collaborators.id, id));
+  }
+
   async delete(id: string): Promise<void> {
     await db.delete(collaborators).where(eq(collaborators.id, id));
   }

@@ -1,10 +1,11 @@
+import { hash } from "bcryptjs";
+import { Collaborator } from "../models/Collaborator";
+import { CollaboratorType } from "../schemas/collaboratorSchema";
 import { GetCollaboratorResponseDTO } from "../dtos/CollaboratorDTO";
 import { ConflictException } from "../exceptions/ConflictException";
 import { NotFoundException } from "../exceptions/NotFoundException";
-import { Collaborator } from "../models/Collaborator";
 import { ICollaboratorRepository } from "../repositories/ICollaboratorRepository";
-import { CollaboratorType } from "../schemas/collaboratorSchema";
-import { hash } from "bcryptjs";
+import { s3 } from "../utils/s3";
 
 export class CollaboratorService {
   constructor(private repository: ICollaboratorRepository) {}
@@ -62,5 +63,41 @@ export class CollaboratorService {
     }
 
     await this.repository.delete(id);
+  }
+
+  async upload(id: string, file: Express.Multer.File): Promise<void> {
+    const bucketName = process.env.AWS_BUCKET!;
+    const collaborator = await this.repository.findById(id);
+
+    if (!collaborator) {
+      throw new NotFoundException("Collaborator not found.");
+    }
+
+    const collaboratorExistingPhoto = collaborator.getPhotoUrl();
+    const folderName = "avatars";
+
+    if (collaboratorExistingPhoto) {
+      const splitedUrl = collaboratorExistingPhoto.split("/");
+      
+      const key = `${folderName}/${splitedUrl[splitedUrl.length - 1]}`;
+
+      await s3.deleteObject({
+        Bucket: bucketName,
+        Key: key,
+      }).promise();
+    }
+
+    const newKey = `${folderName}/${collaborator.getId()}-${file.originalname}`;
+
+    await s3.upload({
+      Bucket: bucketName,
+      Key: newKey,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    }).promise();
+
+    const uploadUrl = `https://${bucketName}.s3.${process.env.AWS_REGION!}.amazonaws.com/${newKey}`;
+
+    await this.repository.updatePhotoUrl(collaborator.getId(), uploadUrl);
   }
 }
