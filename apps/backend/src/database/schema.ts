@@ -1,4 +1,5 @@
-import { pgTable, varchar, pgEnum, timestamp, date } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { pgTable, varchar, pgEnum, timestamp, date, text } from "drizzle-orm/pg-core";
 
 export const collaboratorRoleEnum = pgEnum("collaborator_role", ["admin", "recepcionist", "instructor"]);
 
@@ -16,3 +17,28 @@ export const collaborators = pgTable("collaborators", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const collaboratorsRelations = relations(collaborators, ({ many }) => ({
+  studentsRegistered: many(students),
+}));
+
+export const students = pgTable("students", {
+  id: varchar({ length: 255 }).primaryKey(),
+  name: text().notNull(),
+  avatarUrl: text("avatar_url"),
+  birthDate: date("birth_date").notNull(),
+  cpf: text().notNull().unique(),
+  email: text().notNull().unique(),
+  phone: text().notNull().unique(),
+  profession: text().notNull(),
+  registeredBy: varchar("registered_by", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const studentsRelations = relations(students, ({ one }) => ({
+  collaborator: one(collaborators, {
+    fields: [students.registeredBy],
+    references: [collaborators.id],
+  }),
+}));
