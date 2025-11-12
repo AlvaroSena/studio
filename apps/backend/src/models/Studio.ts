@@ -9,7 +9,7 @@ export class Studio extends Model {
     super(id, createdAt, updatedAt);
 
     studioSchema.parse({ name, address });
-    ((this.name = name), (this.address = name));
+    ((this.name = name), (this.address = address));
   }
 
   getName() {
