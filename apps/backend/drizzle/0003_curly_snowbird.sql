@@ -1,0 +1,1 @@
+ALTER TABLE "students" ADD CONSTRAINT "students_cpf_unique" UNIQUE("cpf");

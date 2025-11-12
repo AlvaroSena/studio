@@ -78,23 +78,27 @@ export class CollaboratorService {
 
     if (collaboratorExistingPhoto) {
       const splitedUrl = collaboratorExistingPhoto.split("/");
-      
+
       const key = `${folderName}/${splitedUrl[splitedUrl.length - 1]}`;
 
-      await s3.deleteObject({
-        Bucket: bucketName,
-        Key: key,
-      }).promise();
+      await s3
+        .deleteObject({
+          Bucket: bucketName,
+          Key: key,
+        })
+        .promise();
     }
 
     const newKey = `${folderName}/${collaborator.getId()}-${file.originalname}`;
 
-    await s3.upload({
-      Bucket: bucketName,
-      Key: newKey,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-    }).promise();
+    await s3
+      .upload({
+        Bucket: bucketName,
+        Key: newKey,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      })
+      .promise();
 
     const uploadUrl = `https://${bucketName}.s3.${process.env.AWS_REGION!}.amazonaws.com/${newKey}`;
 
