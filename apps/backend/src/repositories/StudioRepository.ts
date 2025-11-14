@@ -48,6 +48,7 @@ export class StudioRepository implements IStudioRepository {
       .set({
         name: studio.getName(),
         address: studio.getAddress(),
+        updatedAt: new Date(),
       })
       .where(eq(studios.id, id))
       .returning();
