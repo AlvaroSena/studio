@@ -19,3 +19,9 @@ studioRoutes.post("/", restVerifyAdminToken, (request: Request, response: Respon
 studioRoutes.get("/:id", restVerifyAdminToken, (request: Request, response: Response) =>
   studioController.getById(request, response),
 );
+studioRoutes.put("/update/:id", restVerifyAdminToken, (request: Request, response: Response) =>
+  studioController.update(request, response),
+);
+studioRoutes.delete("/delete/:id", restVerifyAdminToken, (request: Request, response: Response) =>
+  studioController.delete(request, response),
+);

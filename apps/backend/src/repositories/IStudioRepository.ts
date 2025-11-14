@@ -4,6 +4,6 @@ export interface IStudioRepository {
   save(studio: Studio): Promise<Studio>;
   findAll(): Promise<Studio[]>;
   findById(id: string): Promise<Studio | null>;
-  update(studio: Studio): Promise<Studio>;
+  update(studio: Studio, id: string): Promise<Studio>;
   delete(id: string): Promise<void>;
 }

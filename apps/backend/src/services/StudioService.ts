@@ -32,4 +32,28 @@ export class StudioService {
 
     return studio;
   }
+
+  async update(dto: StudioType, id: string): Promise<Studio> {
+    const studioExists = await this.repository.findById(id);
+
+    if (!studioExists) {
+      throw new NotFoundException("Studio not found");
+    }
+
+    const studio = new Studio(dto);
+
+    const updatedStudio = await this.repository.update(studio, id);
+
+    return updatedStudio;
+  }
+
+  async remove(id: string) {
+    const studioExists = await this.repository.findById(id);
+
+    if (!studioExists) {
+      throw new NotFoundException("Studio not found");
+    }
+
+    await this.repository.delete(id);
+  }
 }

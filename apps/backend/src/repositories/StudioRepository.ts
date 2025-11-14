@@ -42,8 +42,21 @@ export class StudioRepository implements IStudioRepository {
     });
   }
 
-  update(studio: Studio): Promise<Studio> {
-    throw new Error("Method not implemented.");
+  async update(studio: Studio, id: string): Promise<Studio> {
+    const [updatedStudio] = await db
+      .update(studios)
+      .set({
+        name: studio.getName(),
+        address: studio.getAddress(),
+      })
+      .where(eq(studios.id, id))
+      .returning();
+
+    return new Studio({
+      id: updatedStudio.id,
+      name: updatedStudio.name,
+      address: updatedStudio.address,
+    });
   }
 
   async delete(id: string): Promise<void> {

@@ -25,4 +25,21 @@ export class StudioController {
 
     return response.json({ studio });
   }
+
+  async update(request: Request, response: Response) {
+    const id = request.params.id;
+    const data = request.body;
+
+    const updatedStudio = await this.studioService.update(data, id);
+
+    return response.json(updatedStudio);
+  }
+
+  async delete(request: Request, response: Response) {
+    const id = request.params.id;
+
+    await this.studioService.remove(id);
+
+    return response.status(204).send();
+  }
 }
