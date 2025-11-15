@@ -3,6 +3,7 @@ import { db } from "../database";
 import { studioSchedule } from "../database/schema";
 import { StudioSchedule } from "../models/StudioSchedule";
 import { IStudioScheduleRepository } from "./IStudioScheduleRepository";
+import { String } from "aws-sdk/clients/appstream";
 
 export class StudioScheduleRepository implements IStudioScheduleRepository {
   async save(schedule: StudioSchedule): Promise<StudioSchedule> {
@@ -26,6 +27,12 @@ export class StudioScheduleRepository implements IStudioScheduleRepository {
     return result;
   }
 
+  async findAllByStudioId(studioId: string): Promise<any[]> {
+    const result = await db.select().from(studioSchedule).where(eq(studioSchedule.studioId, studioId));
+
+    return result;
+  }
+
   async findById(id: string): Promise<StudioSchedule | null> {
     const [schedule] = await db.select().from(studioSchedule).where(eq(studioSchedule.id, id));
 
@@ -38,8 +45,18 @@ export class StudioScheduleRepository implements IStudioScheduleRepository {
     });
   }
 
-  update(studioSchedule: StudioSchedule): Promise<StudioSchedule> {
-    throw new Error("Method not implemented.");
+  async update(schedule: StudioSchedule, id: String): Promise<StudioSchedule> {
+    await db
+      .update(studioSchedule)
+      .set({
+        dayOfWeek: schedule.getDayOfWeek(),
+        openTime: schedule.getOpenTime(),
+        closeTime: schedule.getCloseTime(),
+      })
+      .where(eq(studioSchedule.id, id))
+      .returning();
+
+    return schedule;
   }
 
   async delete(id: string): Promise<void> {

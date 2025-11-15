@@ -11,6 +11,7 @@ export class StudioSchedule extends Model {
     super(id, createdAt, updatedAt);
 
     studioScheduleSchema.parse({ studioId, dayOfWeek, openTime, closeTime });
+    this.studioId = studioId;
     this.dayOfWeek = dayOfWeek;
     this.openTime = openTime;
     this.closeTime = closeTime;
