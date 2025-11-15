@@ -42,3 +42,32 @@ export const studentsRelations = relations(students, ({ one }) => ({
     references: [collaborators.id],
   }),
 }));
+
+export const studios = pgTable("studios", {
+  id: varchar({ length: 255 }).primaryKey(),
+  name: text().notNull(),
+  address: text().notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const studiosRelations = relations(studios, ({ many }) => ({
+  schedules: many(studioSchedule),
+}));
+
+export const studioSchedule = pgTable("studio_schedule", {
+  id: varchar({ length: 255 }).primaryKey(),
+  studioId: varchar("studio_id", { length: 255 }).notNull(),
+  dayOfWeek: text("day_of_week").notNull(),
+  openTime: text("open_time").notNull(),
+  closeTime: text("close_time").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const studioScheduleRelations = relations(studioSchedule, ({ one }) => ({
+  studio: one(studios, {
+    fields: [studioSchedule.studioId],
+    references: [studios.id],
+  }),
+}));
