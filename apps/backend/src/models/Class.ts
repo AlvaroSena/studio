@@ -8,18 +8,16 @@ export type ClassType = (typeof classTypeEnum.enumValues)[number];
 export class Class extends Model {
   private studioId!: string;
   private instructorId!: string;
-  private studentId!: string;
   private date!: Date;
   private status!: ClassStatus;
   private type!: ClassType;
 
-  constructor({ id, studioId, instructorId, studentId, date, status, type, createdAt, updatedAt }: ClassSchemaType) {
+  constructor({ id, studioId, instructorId, date, status, type, createdAt, updatedAt }: ClassSchemaType) {
     super(id, createdAt, updatedAt);
 
-    classSchema.parse({ studioId, instructorId, studentId, date, status, type });
+    classSchema.parse({ studioId, instructorId, date, status, type });
     this.studioId = studioId;
     this.instructorId = instructorId;
-    this.studentId = studentId;
     this.date = date;
     this.status = status;
     this.type = type;
@@ -39,14 +37,6 @@ export class Class extends Model {
 
   setInstructorId(instructorId: string) {
     this.instructorId = instructorId;
-  }
-
-  getStudentId() {
-    return this.studentId;
-  }
-
-  setStudentId(studentId: string) {
-    this.studentId = studentId;
   }
 
   getDate() {

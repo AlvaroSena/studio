@@ -1,0 +1,1 @@
+ALTER TABLE "classes" ALTER COLUMN "date" SET NOT NULL;

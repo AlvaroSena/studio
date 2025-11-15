@@ -4,8 +4,7 @@ export const classSchema = z.object({
   id: z.uuid({ message: "Invalid ID" }).optional(),
   studioId: z.uuid({ message: "Invalid ID" }),
   instructorId: z.uuid({ message: "Invalid ID" }),
-  studentId: z.uuid({ message: "Invalid ID" }),
-  date: z.date(),
+  date: z.coerce.date(),
   status: z.enum(["SCHEDULED", "DONE", "CANCELED"], {
     message: "Invalid status",
   }),
