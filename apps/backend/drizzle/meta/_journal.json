@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1761256963161,
-      "tag": "0000_smart_luke_cage",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1762903569230,
-      "tag": "0001_bitter_sugar_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1762903668532,
-      "tag": "0002_black_angel",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1762952312435,
-      "tag": "0003_curly_snowbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1762958025873,
-      "tag": "0004_mushy_stick",
+      "when": 1763226158340,
+      "tag": "0000_motionless_kronos",
       "breakpoints": true
     }
   ]

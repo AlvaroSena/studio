@@ -2,6 +2,8 @@ import { relations } from "drizzle-orm";
 import { pgTable, varchar, pgEnum, timestamp, date, text } from "drizzle-orm/pg-core";
 
 export const collaboratorRoleEnum = pgEnum("collaborator_role", ["admin", "recepcionist", "instructor"]);
+export const classStatusEnum = pgEnum("class_status", ["SCHEDULED", "DONE", "CANCELED"]);
+export const classTypeEnum = pgEnum("class_type", ["NORMAL", "REPLACEMENT", "EXPERIMENTAL"]);
 
 export const collaborators = pgTable("collaborators", {
   id: varchar({ length: 255 }).primaryKey(),
@@ -20,6 +22,7 @@ export const collaborators = pgTable("collaborators", {
 
 export const collaboratorsRelations = relations(collaborators, ({ many }) => ({
   studentsRegistered: many(students),
+  classes: many(classes),
 }));
 
 export const students = pgTable("students", {
@@ -36,11 +39,12 @@ export const students = pgTable("students", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const studentsRelations = relations(students, ({ one }) => ({
+export const studentsRelations = relations(students, ({ one, many }) => ({
   collaborator: one(collaborators, {
     fields: [students.registeredBy],
     references: [collaborators.id],
   }),
+  classes: many(classes),
 }));
 
 export const studios = pgTable("studios", {
@@ -53,6 +57,7 @@ export const studios = pgTable("studios", {
 
 export const studiosRelations = relations(studios, ({ many }) => ({
   schedules: many(studioSchedule),
+  classes: many(classes),
 }));
 
 export const studioSchedule = pgTable("studio_schedule", {
@@ -69,5 +74,32 @@ export const studioScheduleRelations = relations(studioSchedule, ({ one }) => ({
   studio: one(studios, {
     fields: [studioSchedule.studioId],
     references: [studios.id],
+  }),
+}));
+
+export const classes = pgTable("classes", {
+  id: varchar({ length: 255 }).primaryKey(),
+  studioId: varchar("studio_id", { length: 255 }).notNull(),
+  instructorId: varchar("instructor_id", { length: 255 }).notNull(),
+  studentId: varchar("student_id", { length: 255 }).notNull(),
+  date: timestamp(),
+  status: classStatusEnum("status").notNull(),
+  type: classTypeEnum("type").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const classesRelations = relations(classes, ({ one }) => ({
+  studio: one(studios, {
+    fields: [classes.studioId],
+    references: [studios.id],
+  }),
+  student: one(students, {
+    fields: [classes.studioId],
+    references: [students.id],
+  }),
+  instructor: one(collaborators, {
+    fields: [classes.studioId],
+    references: [collaborators.id],
   }),
 }));
