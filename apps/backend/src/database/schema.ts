@@ -1,9 +1,13 @@
 import { relations } from "drizzle-orm";
-import { pgTable, varchar, pgEnum, timestamp, date, text } from "drizzle-orm/pg-core";
+import { pgTable, varchar, pgEnum, timestamp, date, text, integer } from "drizzle-orm/pg-core";
 
 export const collaboratorRoleEnum = pgEnum("collaborator_role", ["admin", "recepcionist", "instructor"]);
 export const classStatusEnum = pgEnum("class_status", ["SCHEDULED", "DONE", "CANCELED"]);
 export const classTypeEnum = pgEnum("class_type", ["NORMAL", "REPLACEMENT", "EXPERIMENTAL"]);
+export const planPeriodEnum = pgEnum("plan_period", ["MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL"]);
+export const paymentMethodEnum = pgEnum("payment_method", ["PIX", "CASH", "CREDIT_CARD", "DEBIT_CARD"]);
+export const subscriptionStatusEnum = pgEnum("subscription_status", ["PENDING", "ACTIVE", "SUSPENDED", "CANCELED"]);
+export const paymentStatusEnum = pgEnum("payment_status", ["PENDING", "PAID", "OVERDUE", "CANCELED"]);
 
 export const collaborators = pgTable("collaborators", {
   id: varchar({ length: 255 }).primaryKey(),
@@ -45,6 +49,7 @@ export const studentsRelations = relations(students, ({ one, many }) => ({
     references: [collaborators.id],
   }),
   classes: many(classes),
+  subscriptions: many(subscriptions),
 }));
 
 export const studios = pgTable("studios", {
@@ -116,5 +121,58 @@ export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
   student: one(students, {
     fields: [enrollments.studentId],
     references: [students.id],
+  }),
+}));
+
+export const plans = pgTable("plans", {
+  id: varchar({ length: 255 }).primaryKey(),
+  period: planPeriodEnum("period").notNull(),
+  frequency: text().notNull(),
+  monthlyPriceInCents: integer("monthly_price_in_cents").notNull(),
+  totalPriceInCents: integer("total_price_in_cents").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const plansRelations = relations(plans, ({ many }) => ({
+  subscriptions: many(subscriptions),
+}));
+
+export const subscriptions = pgTable("subscriptions", {
+  id: varchar({ length: 255 }).primaryKey(),
+  planId: varchar("plan_id", { length: 255 }).notNull(),
+  studentId: varchar("student_id", { length: 255 }).notNull(),
+  status: subscriptionStatusEnum("status").notNull().default("PENDING"),
+  startDate: timestamp("start_date").defaultNow(),
+  endDate: timestamp("end_date").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const subscriptionsRelations = relations(subscriptions, ({ many, one }) => ({
+  payments: many(subscriptionsPayments),
+  plan: one(plans, {
+    fields: [subscriptions.planId],
+    references: [plans.id],
+  }),
+  student: one(students, {
+    fields: [subscriptions.studentId],
+    references: [students.id],
+  }),
+}));
+
+export const subscriptionsPayments = pgTable("subscriptions_payments", {
+  id: varchar({ length: 255 }).primaryKey(),
+  subscriptionId: varchar("subscription_id", { length: 255 }).notNull(),
+  amountInCents: integer("amount_in_cents").notNull(),
+  dueDate: timestamp("due_date").notNull(),
+  paidAt: timestamp("paid_at"),
+  status: paymentStatusEnum("status").notNull().default("PENDING"),
+  paymentMethod: paymentMethodEnum("payment_method").notNull(),
+});
+
+export const subscriptionsPaymentsRelations = relations(subscriptionsPayments, ({ one }) => ({
+  subscription: one(subscriptions, {
+    fields: [subscriptionsPayments.subscriptionId],
+    references: [subscriptions.id],
   }),
 }));
