@@ -5,6 +5,7 @@ import { studentsRoutes } from "./students.routes";
 import { studioRoutes } from "./studio.routes";
 import { studioScheduleRoutes } from "./studio-schedule.routes";
 import { classRoutes } from "./class.routes";
+import { enrollmentRoutes } from "./enrollment.routes";
 
 export const routes = Router();
 
@@ -14,3 +15,4 @@ routes.use("/students", studentsRoutes);
 routes.use("/studios", studioRoutes);
 routes.use("/schedule", studioScheduleRoutes);
 routes.use("/classes", classRoutes);
+routes.use("/enrollments", enrollmentRoutes);

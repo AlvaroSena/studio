@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { enrollmentSchema } from "./enrollmentSchema";
 
 export const classSchema = z.object({
   id: z.uuid({ message: "Invalid ID" }).optional(),
@@ -11,6 +12,7 @@ export const classSchema = z.object({
   type: z.enum(["NORMAL", "REPLACEMENT", "EXPERIMENTAL"], {
     message: "Invalid role",
   }),
+  enrollments: z.array(enrollmentSchema).optional(),
   createdAt: z.date({ message: "Invalid date" }).optional(),
   updatedAt: z.date({ message: "Invalid date" }).optional(),
 });

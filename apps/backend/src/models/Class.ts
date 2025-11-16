@@ -1,6 +1,7 @@
 import { classStatusEnum, classTypeEnum } from "../database/schema";
 import { Model } from "./Model";
 import { ClassType as ClassSchemaType, classSchema } from "../schemas/classSchema";
+import { EnrollmentType } from "../schemas/enrollmentSchema";
 
 export type ClassStatus = (typeof classStatusEnum.enumValues)[number];
 export type ClassType = (typeof classTypeEnum.enumValues)[number];
@@ -11,8 +12,9 @@ export class Class extends Model {
   private date!: Date;
   private status!: ClassStatus;
   private type!: ClassType;
+  private enrollments?: EnrollmentType[];
 
-  constructor({ id, studioId, instructorId, date, status, type, createdAt, updatedAt }: ClassSchemaType) {
+  constructor({ id, studioId, instructorId, date, status, type, createdAt, updatedAt, enrollments }: ClassSchemaType) {
     super(id, createdAt, updatedAt);
 
     classSchema.parse({ studioId, instructorId, date, status, type });
@@ -21,6 +23,10 @@ export class Class extends Model {
     this.date = date;
     this.status = status;
     this.type = type;
+
+    if (enrollments) {
+      this.enrollments = enrollments;
+    }
   }
 
   getStudioId() {
@@ -61,5 +67,13 @@ export class Class extends Model {
 
   setType(type: ClassType) {
     this.type = type;
+  }
+
+  getEnrollments() {
+    return this.enrollments;
+  }
+
+  setEnrollments(enrollments: EnrollmentType[]) {
+    this.enrollments = enrollments;
   }
 }

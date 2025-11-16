@@ -1,8 +1,9 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "../database";
-import { classes } from "../database/schema";
+import { classes, enrollments } from "../database/schema";
 import { Class } from "../models/Class";
 import { IClassRepository } from "./IClassRepository";
+import { EnrollmentType } from "../schemas/enrollmentSchema";
 
 export class ClassRepository implements IClassRepository {
   async save(data: Class): Promise<Class> {
@@ -28,15 +29,34 @@ export class ClassRepository implements IClassRepository {
   }
 
   async findById(id: string): Promise<Class | null> {
-    const [classFound] = await db.select().from(classes).where(eq(classes.id, id));
+    const [classFound] = await db
+      .select({
+        class: classes,
+        enrollments: sql`
+        json_agg(
+          json_build_object(
+            'id', ${enrollments.id},
+            'classId', ${enrollments.classId},
+            'studentId', ${enrollments.studentId},
+            'createdAt', ${enrollments.createdAt},
+            'updatedAt', ${enrollments.updatedAt}
+          )
+        )
+      `.as("enrollments"),
+      })
+      .from(classes)
+      .leftJoin(enrollments, eq(classes.id, enrollments.classId))
+      .where(eq(classes.id, id))
+      .groupBy(classes.id);
 
     return new Class({
-      id: classFound.id,
-      studioId: classFound.studioId,
-      instructorId: classFound.instructorId,
-      date: classFound.date,
-      status: classFound.status,
-      type: classFound.type,
+      id: classFound.class.id,
+      studioId: classFound.class.studioId,
+      instructorId: classFound.class.instructorId,
+      date: classFound.class.date,
+      status: classFound.class.status,
+      type: classFound.class.type,
+      enrollments: classFound.enrollments as EnrollmentType[],
     });
   }
 
