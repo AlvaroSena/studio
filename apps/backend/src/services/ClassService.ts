@@ -50,4 +50,26 @@ export class ClassService {
 
     return classExists;
   }
+
+  async update(dto: ClassType, id: string) {
+    const classExists = await this.repository.findById(id);
+
+    if (!classExists) {
+      throw new NotFoundException("Class not found.");
+    }
+
+    const rescheduledClass = await this.repository.update(new Class(dto), id);
+
+    return rescheduledClass;
+  }
+
+  async remove(id: string) {
+    const classExists = await this.repository.findById(id);
+
+    if (!classExists) {
+      throw new NotFoundException("Class not found.");
+    }
+
+    await this.repository.delete(id);
+  }
 }

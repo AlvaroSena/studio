@@ -74,11 +74,19 @@ export class ClassRepository implements IClassRepository {
   }
 
   async update(data: Class, id: string): Promise<Class> {
-    // await db.update(classes).set({
-    //   studentId: data.getStudioId(),
-    //   instructorId: data.getInstructorId(),
-    // })
-    throw new Error("");
+    await db
+      .update(classes)
+      .set({
+        studioId: data.getStudioId(),
+        instructorId: data.getInstructorId(),
+        date: new Date(data.getDate()),
+        status: data.getStatus(),
+        type: data.getType(),
+      })
+      .where(eq(classes.id, id))
+      .returning();
+
+    return data;
   }
 
   async delete(id: string): Promise<void> {

@@ -25,4 +25,21 @@ export class ClassController {
 
     return response.json(classFound);
   }
+
+  async update(request: Request, response: Response) {
+    const id = request.params.id;
+    const body = request.body;
+
+    const rescheduledClass = await this.classService.update(body, id);
+
+    return response.json(rescheduledClass);
+  }
+
+  async delete(request: Request, response: Response) {
+    const id = request.params.id;
+
+    await this.classService.remove(id);
+
+    return response.status(204).send();
+  }
 }
