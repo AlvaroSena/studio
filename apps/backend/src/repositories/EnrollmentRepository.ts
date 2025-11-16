@@ -24,8 +24,18 @@ export class EnrollmentRepository implements IEnrollmentRepository {
     return result;
   }
 
+  async findAllByClassId(classId: string): Promise<any[]> {
+    const result = await db.select().from(enrollments).where(eq(enrollments.classId, classId));
+
+    return result;
+  }
+
   async findById(id: string): Promise<Enrollment | null> {
     const [enrollment] = await db.select().from(enrollments).where(eq(enrollments.id, id));
+
+    if (!enrollment) {
+      return null;
+    }
 
     return new Enrollment({
       id: enrollment.id,
@@ -41,6 +51,7 @@ export class EnrollmentRepository implements IEnrollmentRepository {
         classId: enrollment.getClassId(),
         studentId: enrollment.getStudentId(),
       })
+      .where(eq(enrollments.id, id))
       .returning();
 
     return enrollment;

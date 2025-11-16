@@ -21,7 +21,7 @@ export class EnrollmentService {
   }
 
   async create(dto: EnrollmentType): Promise<Enrollment> {
-    const classExists = await this.classRepository.findById(dto.classId);
+    const classExists = await this.classRepository.findByIdWithEnrollments(dto.classId);
 
     if (!classExists) {
       throw new NotFoundException("Class not found.");
@@ -33,9 +33,9 @@ export class EnrollmentService {
       throw new BadRequestException("You've reached the limit of three students per class");
     }
 
-    const studentIsAlreadyEnrolled = enrollments?.some((enrollment) => enrollment.studentId === dto.studentId);
+    const isStudentAlreadyEnrolled = enrollments?.some((enrollment) => enrollment.studentId === dto.studentId);
 
-    if (studentIsAlreadyEnrolled) {
+    if (isStudentAlreadyEnrolled) {
       throw new ConflictException("The student is already enrolled in this class");
     }
 
@@ -48,5 +48,49 @@ export class EnrollmentService {
     const enrollment = await this.repository.save(new Enrollment(dto));
 
     return enrollment;
+  }
+
+  async listByClassId(classId: string) {
+    const classExists = await this.classRepository.findById(classId);
+
+    if (!classExists) {
+      throw new NotFoundException("Class not found.");
+    }
+
+    const enrollments = await this.repository.findAllByClassId(classId);
+
+    return enrollments;
+  }
+
+  async getById(id: string) {
+    const enrollment = await this.repository.findById(id);
+
+    if (!enrollment) {
+      throw new NotFoundException("Enrollment not found.");
+    }
+
+    return enrollment;
+  }
+
+  async update(dto: EnrollmentType, id: string): Promise<Enrollment> {
+    const enrollmentExists = await this.repository.findById(id);
+
+    if (!enrollmentExists) {
+      throw new NotFoundException("Enrollment not found.");
+    }
+
+    const updatedEnrollment = await this.repository.update(new Enrollment(dto), id);
+
+    return updatedEnrollment;
+  }
+
+  async remove(id: string): Promise<void> {
+    const enrollmentExists = await this.repository.findById(id);
+
+    if (!enrollmentExists) {
+      throw new NotFoundException("Enrollment not found.");
+    }
+
+    await this.repository.delete(id);
   }
 }

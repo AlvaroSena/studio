@@ -29,6 +29,19 @@ export class ClassRepository implements IClassRepository {
   }
 
   async findById(id: string): Promise<Class | null> {
+    const [classFound] = await db.select().from(classes).where(eq(classes.id, id));
+
+    return new Class({
+      id: classFound.id,
+      studioId: classFound.studioId,
+      instructorId: classFound.instructorId,
+      date: classFound.date,
+      status: classFound.status,
+      type: classFound.type,
+    });
+  }
+
+  async findByIdWithEnrollments(id: string): Promise<Class | null> {
     const [classFound] = await db
       .select({
         class: classes,

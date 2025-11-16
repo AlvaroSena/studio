@@ -14,4 +14,14 @@ const enrollmentService = new EnrollmentService(enrollmentRepository, classRepos
 const enrollmentController = new EnrollmentController(enrollmentService);
 
 enrollmentRoutes.get("/", (request: Request, response: Response) => enrollmentController.listAll(request, response));
+enrollmentRoutes.get("/classes/:classId", (request: Request, response: Response) =>
+  enrollmentController.listByClassId(request, response),
+);
 enrollmentRoutes.post("/", (request: Request, response: Response) => enrollmentController.create(request, response));
+enrollmentRoutes.get("/:id", (request: Request, response: Response) => enrollmentController.getById(request, response));
+enrollmentRoutes.put("/update/:id", (request: Request, response: Response) =>
+  enrollmentController.update(request, response),
+);
+enrollmentRoutes.delete("/delete/:id", (request: Request, response: Response) =>
+  enrollmentController.delete(request, response),
+);
