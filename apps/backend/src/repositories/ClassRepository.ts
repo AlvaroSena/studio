@@ -28,6 +28,18 @@ export class ClassRepository implements IClassRepository {
     return result;
   }
 
+  async findAllByStudioId(studioId: string): Promise<any[]> {
+    const result = await db.select().from(classes).where(eq(classes.studioId, studioId));
+
+    return result;
+  }
+
+  async findAllByInstructorId(instructorId: string): Promise<any[]> {
+    const result = await db.select().from(classes).where(eq(classes.instructorId, instructorId));
+
+    return result;
+  }
+
   async findById(id: string): Promise<Class | null> {
     const [classFound] = await db.select().from(classes).where(eq(classes.id, id));
 

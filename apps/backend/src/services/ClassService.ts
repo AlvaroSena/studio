@@ -19,6 +19,34 @@ export class ClassService {
     return classes;
   }
 
+  async listAllByStudioId(studioId: string) {
+    const studioExists = await this.studioRepository.findById(studioId);
+
+    if (!studioExists) {
+      throw new NotFoundException("Studio not found");
+    }
+
+    const classes = await this.repository.findAllByStudioId(studioId);
+
+    return classes;
+  }
+
+  async listAllByInstructorId(instructorId: string) {
+    const collaboratorExists = await this.collaboratorRepository.findById(instructorId);
+
+    if (!collaboratorExists) {
+      throw new NotFoundException("Instructor not found");
+    }
+
+    if (collaboratorExists.getRole() !== "instructor") {
+      throw new BadRequestException("You must be an instructor to list classes");
+    }
+
+    const classes = await this.repository.findAllByInstructorId(instructorId);
+
+    return classes;
+  }
+
   async create(dto: ClassType) {
     const studioExists = await this.studioRepository.findById(dto.studioId);
 

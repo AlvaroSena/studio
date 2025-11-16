@@ -10,6 +10,22 @@ export class ClassController {
     return response.json(classes);
   }
 
+  async listAllByStudioId(request: Request, response: Response) {
+    const studioId = request.params.studioId;
+
+    const classes = await this.classService.listAllByStudioId(studioId);
+
+    return response.json(classes);
+  }
+
+  async listAllByInstructorId(request: Request, response: Response) {
+    const instructorId = request.params.instructorId;
+
+    const classes = await this.classService.listAllByInstructorId(instructorId);
+
+    return response.json(classes);
+  }
+
   async create(request: Request, response: Response) {
     const body = request.body;
 

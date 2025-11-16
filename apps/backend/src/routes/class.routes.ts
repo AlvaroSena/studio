@@ -14,6 +14,12 @@ const classService = new ClassService(classRepository, studioRepository, collabo
 const classController = new ClassController(classService);
 
 classRoutes.get("/", (request: Request, response: Response) => classController.listAll(request, response));
+classRoutes.get("/studios/:studioId", (request: Request, response: Response) =>
+  classController.listAllByStudioId(request, response),
+);
+classRoutes.get("/instructors/:instructorId", (request: Request, response: Response) =>
+  classController.listAllByInstructorId(request, response),
+);
 classRoutes.post("/", (request: Request, response: Response) => classController.create(request, response));
 classRoutes.get("/:id", (request: Request, response: Response) => classController.getById(request, response));
 classRoutes.put("/reschedule/:id", (request: Request, response: Response) => classController.update(request, response));
