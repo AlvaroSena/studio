@@ -4,13 +4,20 @@ import { EnrollmentService } from "../services/EnrollmentService";
 import { EnrollmentRepository } from "../repositories/EnrollmentRepository";
 import { ClassRepository } from "../repositories/ClassRepository";
 import { StudentRepository } from "../repositories/StudentRepository";
+import { SubscriptionRepository } from "../repositories/SubscriptionRepository";
 
 export const enrollmentRoutes = Router();
 
+const subscriptionRepository = new SubscriptionRepository();
 const studentRepository = new StudentRepository();
 const classRepository = new ClassRepository();
 const enrollmentRepository = new EnrollmentRepository();
-const enrollmentService = new EnrollmentService(enrollmentRepository, classRepository, studentRepository);
+const enrollmentService = new EnrollmentService(
+  enrollmentRepository,
+  classRepository,
+  studentRepository,
+  subscriptionRepository,
+);
 const enrollmentController = new EnrollmentController(enrollmentService);
 
 enrollmentRoutes.get("/", (request: Request, response: Response) => enrollmentController.listAll(request, response));
