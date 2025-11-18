@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { CollaboratorRepository } from "../repositories/CollaboratorRepository";
 import { verify } from "jsonwebtoken";
+import { CollaboratorRole } from "../models/Collaborator";
 
 interface Payload {
   sub: string;
+  role: CollaboratorRole;
 }
 
 declare global {
@@ -14,7 +16,7 @@ declare global {
   }
 }
 
-export async function restVerifyAdminToken(request: Request, reply: Response, next: NextFunction) {
+export async function restVerifyCollaboratorToken(request: Request, reply: Response, next: NextFunction) {
   const authHeader = request.headers["authorization"];
 
   const token = authHeader && authHeader.split(" ")[1];
