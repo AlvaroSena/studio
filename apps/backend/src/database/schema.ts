@@ -48,7 +48,6 @@ export const studentsRelations = relations(students, ({ one, many }) => ({
     fields: [students.registeredBy],
     references: [collaborators.id],
   }),
-  classes: many(classes),
   subscriptions: many(subscriptions),
 }));
 
@@ -143,7 +142,7 @@ export const subscriptions = pgTable("subscriptions", {
   planId: varchar("plan_id", { length: 255 }).notNull(),
   studentId: varchar("student_id", { length: 255 }).notNull(),
   status: subscriptionStatusEnum("status").notNull().default("PENDING"),
-  startDate: timestamp("start_date").defaultNow(),
+  startDate: timestamp("start_date").defaultNow().notNull(),
   endDate: timestamp("end_date").notNull(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
