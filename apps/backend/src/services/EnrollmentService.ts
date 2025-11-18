@@ -5,6 +5,7 @@ import { Enrollment } from "../models/Enrollment";
 import { IClassRepository } from "../repositories/IClassRepository";
 import { IEnrollmentRepository } from "../repositories/IEnrollmentRepository";
 import { IStudentRepository } from "../repositories/IStudentRepository";
+import { ISubscriptionRepository } from "../repositories/ISubscriptionRepository";
 import { EnrollmentType } from "../schemas/enrollmentSchema";
 
 export class EnrollmentService {
@@ -12,6 +13,7 @@ export class EnrollmentService {
     private repository: IEnrollmentRepository,
     private classRepository: IClassRepository,
     private studentRepository: IStudentRepository,
+    private subscriptionRepository: ISubscriptionRepository,
   ) {}
 
   async listAll() {
@@ -37,6 +39,12 @@ export class EnrollmentService {
 
     if (isStudentAlreadyEnrolled) {
       throw new ConflictException("The student is already enrolled in this class");
+    }
+
+    const doesStudentHaveASubscription = await this.subscriptionRepository.findByStudentId(dto.studentId);
+
+    if (!doesStudentHaveASubscription || doesStudentHaveASubscription.getStatus() !== "ACTIVE") {
+      throw new BadRequestException("The student needs to have an active subscription to enroll");
     }
 
     const studentExists = await this.studentRepository.findById(dto.studentId);
