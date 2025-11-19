@@ -4,6 +4,7 @@ import { SubscriptionService } from "../services/SubscriptionService";
 import { SubscriptionRepository } from "../repositories/SubscriptionRepository";
 import { PlanRepository } from "../repositories/PlanRepository";
 import { StudentRepository } from "../repositories/StudentRepository";
+import { restVerifyCollaboratorToken } from "../middlewares/restVerifyCollaboratorToken";
 
 export const subscriptionRoutes = Router();
 
@@ -13,9 +14,13 @@ const subscriptionRepository = new SubscriptionRepository();
 const subscriptionService = new SubscriptionService(subscriptionRepository, planRepository, studentRepository);
 const subscriptionController = new SubscriptionController(subscriptionService);
 
-subscriptionRoutes.get("/subscriptions", (request: Request, response: Response) =>
-  subscriptionController.listAll(request, response),
+subscriptionRoutes.get(
+  "/subscriptions",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => subscriptionController.listAll(request, response),
 );
-subscriptionRoutes.post("/subscribe", (request: Request, response: Response) =>
-  subscriptionController.create(request, response),
+subscriptionRoutes.post(
+  "/subscribe",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => subscriptionController.create(request, response),
 );

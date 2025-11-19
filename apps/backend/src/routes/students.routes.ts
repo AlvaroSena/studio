@@ -10,15 +10,23 @@ const studentRepository = new StudentRepository();
 const studentService = new StudentService(studentRepository);
 const studentController = new StudentController(studentService);
 
-studentsRoutes.get("/", restVerifyCollaboratorToken, (request, response) =>
-  studentController.listAll(request, response),
+studentsRoutes.get(
+  "/",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => studentController.listAll(request, response),
 );
-studentsRoutes.post("/", restVerifyCollaboratorToken, (request, response) =>
-  studentController.create(request, response),
+studentsRoutes.post(
+  "/",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => studentController.create(request, response),
 );
-studentsRoutes.get("/:id", restVerifyCollaboratorToken, (request, response) =>
-  studentController.getById(request, response),
+studentsRoutes.get(
+  "/:id",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => studentController.getById(request, response),
 );
-studentsRoutes.delete("/delete/:id", restVerifyCollaboratorToken, (request, response) =>
-  studentController.delete(request, response),
+studentsRoutes.delete(
+  "/delete/:id",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => studentController.delete(request, response),
 );

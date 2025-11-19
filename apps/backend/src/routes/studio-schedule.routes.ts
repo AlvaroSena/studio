@@ -12,18 +12,22 @@ const studioScheduleRepository = new StudioScheduleRepository();
 const studioScheduleService = new StudioScheduleService(studioScheduleRepository, studioRepository);
 const studioScheduleController = new StudioScheduleController(studioScheduleService);
 
-studioScheduleRoutes.post("/", restVerifyCollaboratorToken, (request: Request, response: Response) =>
-  studioScheduleController.create(request, response),
+studioScheduleRoutes.post(
+  "/",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => studioScheduleController.create(request, response),
 );
 
-studioScheduleRoutes.get("/studio/:studioId", restVerifyCollaboratorToken, (request: Request, response: Response) =>
+studioScheduleRoutes.get("/studios/:studioId", (request: Request, response: Response) =>
   studioScheduleController.listAll(request, response),
 );
 
-studioScheduleRoutes.put("/:id", restVerifyCollaboratorToken, (request: Request, response: Response) =>
-  studioScheduleController.update(request, response),
+studioScheduleRoutes.put(
+  "/:id",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => studioScheduleController.update(request, response),
 );
 
-studioScheduleRoutes.delete("/:id", restVerifyCollaboratorToken, (request: Request, response: Response) =>
+studioScheduleRoutes.delete("/:id", restVerifyCollaboratorToken(["admin"]), (request: Request, response: Response) =>
   studioScheduleController.delete(request, response),
 );
