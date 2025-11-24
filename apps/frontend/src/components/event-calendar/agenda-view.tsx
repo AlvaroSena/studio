@@ -25,7 +25,7 @@ export function AgendaView({
   const days = useMemo(() => {
     console.log("Agenda view updating with date:", currentDate.toISOString());
     return Array.from({ length: AgendaDaysToShow }, (_, i) =>
-      addDays(new Date(currentDate), i),
+      addDays(new Date(currentDate), i)
     );
   }, [currentDate]);
 
@@ -37,7 +37,7 @@ export function AgendaView({
 
   // Check if there are any days with events
   const hasEvents = days.some(
-    (day) => getAgendaEventsForDay(events, day).length > 0,
+    (day) => getAgendaEventsForDay(events, day).length > 0
   );
 
   return (
@@ -48,9 +48,9 @@ export function AgendaView({
             size={32}
             className="text-muted-foreground/50 mb-2"
           />
-          <h3 className="text-lg font-medium">No events found</h3>
+          <h3 className="text-lg font-medium">Aulas não encontradas</h3>
           <p className="text-muted-foreground">
-            There are no events scheduled for this time period.
+            Não há aulas agendadas neste período
           </p>
         </div>
       ) : (

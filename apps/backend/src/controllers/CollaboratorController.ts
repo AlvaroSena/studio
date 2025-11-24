@@ -1,11 +1,19 @@
 import { Request, Response } from "express";
 import { CollaboratorService } from "../services/CollaboratorService";
+import { CollaboratorRole } from "../models/Collaborator";
 
 export class CollaboratorController {
   constructor(private collaboratorService: CollaboratorService) {}
 
   async listAll(request: Request, response: Response) {
     const collaborators = await this.collaboratorService.listAll();
+    return response.json(collaborators);
+  }
+
+  async listAllByRole(request: Request, response: Response) {
+    const role = request.params.role as CollaboratorRole;
+
+    const collaborators = await this.collaboratorService.listAllByRole(role);
     return response.json(collaborators);
   }
 

@@ -1,5 +1,3 @@
-import { LockKeyhole } from "lucide-react";
-
 import { LoginForm } from "@/components/login-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OTPForm } from "@/components/otp-form";
@@ -34,27 +32,23 @@ export function Login() {
         </p>
       </div>
       {!session ? (
-        <Tabs defaultValue="collaborator" className="my-8 w-full">
+        <Tabs defaultValue="tab-1" className="my-8">
           <TabsList className="w-full">
-            <TabsTrigger
-              value="collaborator"
-              className="poppins-medium text-foreground"
-            >
+            <TabsTrigger value="tab-1" className="w-full">
               Colaborador
             </TabsTrigger>
-            <TabsTrigger
-              value="student"
-              className="poppins-medium text-foreground"
-              disabled
-            >
-              <LockKeyhole size={16} />
+            <TabsTrigger value="tab-2" className="w-full">
               Aluno
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="collaborator">
+          <TabsContent value="tab-1">
             <LoginForm />
           </TabsContent>
-          <TabsContent value="student">Cooming soon</TabsContent>
+          <TabsContent value="tab-2">
+            <p className="p-4 text-center text-xs text-muted-foreground">
+              Em breve
+            </p>
+          </TabsContent>
         </Tabs>
       ) : (
         <OTPForm />

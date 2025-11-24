@@ -1,5 +1,5 @@
 import { hash } from "bcryptjs";
-import { Collaborator } from "../models/Collaborator";
+import { Collaborator, CollaboratorRole } from "../models/Collaborator";
 import { CollaboratorType } from "../schemas/collaboratorSchema";
 import { GetCollaboratorResponseDTO } from "../dtos/CollaboratorDTO";
 import { ConflictException } from "../exceptions/ConflictException";
@@ -12,6 +12,18 @@ export class CollaboratorService {
 
   async listAll() {
     const collaborators = await this.repository.findAll();
+
+    return collaborators;
+  }
+
+  async listAllByRole(role: CollaboratorRole) {
+    const possibleCollaboratorsRoles: CollaboratorRole[] = ["admin", "recepcionist", "instructor"];
+
+    if (!possibleCollaboratorsRoles.includes(role)) {
+      throw new NotFoundException("Role not found.");
+    }
+
+    const collaborators = await this.repository.findAllByRole(role);
 
     return collaborators;
   }

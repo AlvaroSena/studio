@@ -1,7 +1,7 @@
 import { db } from "../database";
 import { collaborators } from "../database/schema";
 import { eq } from "drizzle-orm";
-import { Collaborator } from "../models/Collaborator";
+import { Collaborator, CollaboratorRole } from "../models/Collaborator";
 import { ICollaboratorRepository } from "./ICollaboratorRepository";
 
 export class CollaboratorRepository implements ICollaboratorRepository {
@@ -47,6 +47,26 @@ export class CollaboratorRepository implements ICollaboratorRepository {
         updatedAt: collaborators.updatedAt,
       })
       .from(collaborators);
+
+    return result.map((user) => {
+      const { password, ...rest } = user as any;
+      return rest;
+    });
+  }
+
+  async findAllByRole(role: CollaboratorRole): Promise<Omit<Collaborator, "password">[]> {
+    const result = await db
+      .select({
+        id: collaborators.id,
+        name: collaborators.name,
+        photoUrl: collaborators.photoUrl,
+        email: collaborators.email,
+        role: collaborators.role,
+        createdAt: collaborators.createdAt,
+        updatedAt: collaborators.updatedAt,
+      })
+      .from(collaborators)
+      .where(eq(collaborators.role, role));
 
     return result.map((user) => {
       const { password, ...rest } = user as any;

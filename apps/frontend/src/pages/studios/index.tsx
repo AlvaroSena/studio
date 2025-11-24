@@ -1,15 +1,6 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+
+import { StudiosTable } from "@/components/studios-table";
 
 export function Studios() {
   return (
@@ -19,29 +10,7 @@ export function Studios() {
         <Button>Novo Estúdio</Button>
       </div>
 
-      <Link to="/studios/agenda/1">
-        <Card>
-          <CardHeader>
-            <CardTitle>Studio 01</CardTitle>
-            <CardDescription>Card Description</CardDescription>
-            <CardAction>
-              <Button
-                variant="outline"
-                size="icon"
-                className="hover:text-red-500"
-              >
-                <Trash2 />
-              </Button>
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <p>Card Content</p>
-          </CardContent>
-          <CardFooter>
-            <p>Card Footer</p>
-          </CardFooter>
-        </Card>
-      </Link>
+      <StudiosTable />
     </div>
   );
 }

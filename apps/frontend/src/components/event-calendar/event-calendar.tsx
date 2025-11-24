@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { RiCalendarCheckLine } from "@remixicon/react";
 import {
   addDays,
-  addHours,
   addMonths,
   addWeeks,
   endOfWeek,
@@ -66,7 +65,7 @@ export function EventCalendar({
   const [view, setView] = useState<CalendarView>(initialView);
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null,
+    null
   );
 
   // Add keyboard shortcuts for view switching
@@ -163,9 +162,11 @@ export function EventCalendar({
     const newEvent: CalendarEvent = {
       id: "",
       title: "",
-      start: startTime,
-      end: addHours(startTime, 1),
-      allDay: false,
+      date: startTime,
+      studioId: "",
+      instructorId: "",
+      status: "SCHEDULED",
+      type: "NORMAL",
     };
     setSelectedEvent(newEvent);
     setIsEventDialogOpen(true);
@@ -176,7 +177,7 @@ export function EventCalendar({
       onEventUpdate?.(event);
       // Show toast notification when an event is updated
       toast(`Event "${event.title}" updated`, {
-        description: format(new Date(event.start), "MMM d, yyyy"),
+        description: format(new Date(event.date), "MMM d, yyyy"),
         position: "bottom-left",
       });
     } else {
@@ -186,7 +187,7 @@ export function EventCalendar({
       });
       // Show toast notification when an event is added
       toast(`Event "${event.title}" added`, {
-        description: format(new Date(event.start), "MMM d, yyyy"),
+        description: format(new Date(event.date), "MMM d, yyyy"),
         position: "bottom-left",
       });
     }
@@ -203,7 +204,7 @@ export function EventCalendar({
     // Show toast notification when an event is deleted
     if (deletedEvent) {
       toast(`Event "${deletedEvent.title}" deleted`, {
-        description: format(new Date(deletedEvent.start), "MMM d, yyyy"),
+        description: format(new Date(deletedEvent.date), "MMM d, yyyy"),
         position: "bottom-left",
       });
     }
@@ -214,7 +215,7 @@ export function EventCalendar({
 
     // Show toast notification when an event is updated via drag and drop
     toast(`Event "${updatedEvent.title}" moved`, {
-      description: format(new Date(updatedEvent.start), "MMM d, yyyy"),
+      description: format(new Date(updatedEvent.date), "MMM d, yyyy"),
       position: "bottom-left",
     });
   };
@@ -296,7 +297,7 @@ export function EventCalendar({
         <div
           className={cn(
             "flex items-center justify-between p-2 sm:p-4",
-            className,
+            className
           )}
         >
           <div className="flex items-center gap-1 sm:gap-4">

@@ -1,32 +1,57 @@
-import { classStatusEnum, classTypeEnum } from "../database/schema";
+import { classColorEnum, classStatusEnum, classTypeEnum } from "../database/schema";
 import { Model } from "./Model";
 import { ClassType as ClassSchemaType, classSchema } from "../schemas/classSchema";
 import { EnrollmentType } from "../schemas/enrollmentSchema";
 
 export type ClassStatus = (typeof classStatusEnum.enumValues)[number];
 export type ClassType = (typeof classTypeEnum.enumValues)[number];
+export type ClassColor = (typeof classColorEnum.enumValues)[number];
 
 export class Class extends Model {
+  private title!: string;
   private studioId!: string;
   private instructorId!: string;
   private date!: Date;
   private status!: ClassStatus;
   private type!: ClassType;
+  private color!: ClassColor;
   private enrollments?: EnrollmentType[];
 
-  constructor({ id, studioId, instructorId, date, status, type, createdAt, updatedAt, enrollments }: ClassSchemaType) {
+  constructor({
+    id,
+    title,
+    studioId,
+    instructorId,
+    date,
+    status,
+    type,
+    color,
+    createdAt,
+    updatedAt,
+    enrollments,
+  }: ClassSchemaType) {
     super(id, createdAt, updatedAt);
 
-    classSchema.parse({ studioId, instructorId, date, status, type });
+    classSchema.parse({ title, studioId, instructorId, date, status, type, color });
+    this.title = title;
     this.studioId = studioId;
     this.instructorId = instructorId;
     this.date = date;
     this.status = status;
     this.type = type;
+    this.color = color;
 
     if (enrollments) {
       this.enrollments = enrollments;
     }
+  }
+
+  getTitle() {
+    return this.title;
+  }
+
+  setTitle(title: string) {
+    this.title = title;
   }
 
   getStudioId() {
@@ -67,6 +92,14 @@ export class Class extends Model {
 
   setType(type: ClassType) {
     this.type = type;
+  }
+
+  getColor() {
+    return this.color;
+  }
+
+  setColor(color: ClassColor) {
+    this.color = color;
   }
 
   getEnrollments() {
