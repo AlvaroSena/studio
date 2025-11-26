@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getStudioClasses } from "@/lib/api";
+import { StudioWorkSchedule } from "@/components/studio-work-schedule";
 import type { CalendarEvent } from "@/components/event-calendar";
 
 export function StudioAgenda() {
@@ -57,9 +58,11 @@ export function StudioAgenda() {
           <ClassSchedule events={classes} />
         </TabsContent>
         <TabsContent value="tab-2">
-          <p className="p-4 pt-1 text-center text-xs text-muted-foreground">
-            Content for Tab 2
-          </p>
+          {id && (
+            <div className="flex flex-col gap-8">
+              <StudioWorkSchedule studioId={id} />
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

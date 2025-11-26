@@ -22,28 +22,26 @@ export class StudioScheduleService {
     return schedule;
   }
 
-  async create(dto: StudioScheduleType) {
-    const studioExists = await this.studioRepository.findById(dto.studioId);
+  async create(dto: StudioScheduleType[]) {
+    const studioExists = await this.studioRepository.findById(dto[0].studioId);
 
     if (!studioExists) {
       throw new NotFoundException("Studio not found");
     }
 
-    const schedule = await this.repository.save(new StudioSchedule(dto));
+    const schedules = dto.map((item) => new StudioSchedule(item));
+
+    const schedule = await this.repository.save(schedules);
 
     return schedule;
   }
 
-  async update(dto: StudioScheduleType, id: string): Promise<StudioSchedule> {
-    const scheduleExists = await this.repository.findById(id);
+  async update(dto: StudioScheduleType[]): Promise<StudioSchedule[]> {
+    const schedules = dto.map((item) => new StudioSchedule(item));
 
-    if (!scheduleExists) {
-      throw new NotFoundException("Schedule not found");
-    }
+    const updatedSchedules = await this.repository.update(schedules);
 
-    const updatedStudio = await this.repository.update(new StudioSchedule(dto), id);
-
-    return updatedStudio;
+    return updatedSchedules;
   }
 
   async remove(id: string) {

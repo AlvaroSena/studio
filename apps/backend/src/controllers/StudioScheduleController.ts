@@ -22,10 +22,9 @@ export class StudioScheduleController {
   }
 
   async update(request: Request, response: Response) {
-    const id = request.params.id;
     const body = request.body;
 
-    const updatedSchedule = await this.studioScheduleService.update(body, id);
+    const updatedSchedule = await this.studioScheduleService.update(body);
 
     return response.json(updatedSchedule);
   }
