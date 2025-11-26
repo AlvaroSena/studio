@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 
@@ -113,32 +114,35 @@ export function StudioWorkSchedule({ studioId }: StudioWorkScheduleProps) {
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
-    const formatted = Object.entries(data)
-      .filter(([, v]) => v.enabled)
-      .map(([dayCode, v]) => {
-        const existing = apiData.find((d) => d.dayOfWeek === dayCode);
+    const formatted = Object.entries(data).map(([dayCode, v]) => {
+      const existing = apiData.find((d) => d.dayOfWeek === dayCode);
 
-        return {
-          id: existing?.id, // mantém o ID
-          studioId: existing?.studioId, // mantém o studioId
-          dayOfWeek: dayCode,
-          openTime: v.start,
-          closeTime: v.end,
-        };
-      });
+      return {
+        id: existing?.id,
+        studioId: existing?.studioId,
+        dayOfWeek: dayCode,
+        openTime: v.start,
+        closeTime: v.end,
+        enabled: v.enabled,
+      };
+    });
 
     try {
       const response = await api.put("/schedule/update", formatted);
 
-      if (response && response.status === 200) {
-        getStudioSchedule(studioId).then((data) => {
-          setApiData(data);
-          const mapped = mapApiStudioScheduleResponse(data);
-          form.reset(mapped);
-        });
-        toast.success("Horário alterado com sucesso");
+      if (response && response.status !== 200) {
+        toast.error("Erro ao alterar horário. Tente novamente mais tarde");
       }
+
+      getStudioSchedule(studioId).then((data) => {
+        setApiData(data);
+        const mapped = mapApiStudioScheduleResponse(data);
+        form.reset(mapped);
+      });
+
       setIsLoading(false);
+
+      toast.success("Horário alterado com sucesso");
     } catch (err) {
       console.log(err);
     }

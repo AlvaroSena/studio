@@ -40,6 +40,7 @@ export class StudioScheduleRepository implements IStudioScheduleRepository {
       dayOfWeek: schedule.dayOfWeek,
       openTime: schedule.openTime,
       closeTime: schedule.closeTime,
+      enabled: schedule.enabled,
     });
   }
 
@@ -51,6 +52,7 @@ export class StudioScheduleRepository implements IStudioScheduleRepository {
           openTime: item.getOpenTime(),
           closeTime: item.getCloseTime(),
           dayOfWeek: item.getDayOfWeek(),
+          enabled: item.getEnabled(),
         })
         .where(eq(studioSchedule.id, item.getId()));
     }

@@ -14,7 +14,7 @@ export function mapApiStudioScheduleResponse(apiResponse: any[]) {
 
   apiResponse.forEach((item) => {
     defaults[item.dayOfWeek as WeekDayCode] = {
-      enabled: true,
+      enabled: item.enabled,
       start: item.openTime,
       end: item.closeTime,
     };

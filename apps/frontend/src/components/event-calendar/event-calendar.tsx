@@ -247,7 +247,7 @@ export function EventCalendar({
               locale: ptBR,
             })}
           </span>
-          <span className="max-[479px]:hidden min-md:hidden" aria-hidden="true">
+          <span className="max-[479px]:hidden md:hidden" aria-hidden="true">
             {format(currentDate, "MMMM d, yyyy", {
               locale: ptBR,
             })}

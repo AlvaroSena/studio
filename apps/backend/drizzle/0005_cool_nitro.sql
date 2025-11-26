@@ -1,0 +1,1 @@
+ALTER TABLE "studio_schedule" ADD COLUMN "enabled" boolean DEFAULT true NOT NULL;

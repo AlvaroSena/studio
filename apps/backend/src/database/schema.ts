@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, varchar, pgEnum, timestamp, date, text, integer } from "drizzle-orm/pg-core";
+import { pgTable, varchar, pgEnum, timestamp, date, text, integer, boolean } from "drizzle-orm/pg-core";
 
 export const collaboratorRoleEnum = pgEnum("collaborator_role", ["admin", "recepcionist", "instructor"]);
 export const classStatusEnum = pgEnum("class_status", ["SCHEDULED", "DONE", "CANCELED"]);
@@ -71,6 +71,7 @@ export const studioSchedule = pgTable("studio_schedule", {
   dayOfWeek: text("day_of_week").notNull(),
   openTime: text("open_time").notNull(),
   closeTime: text("close_time").notNull(),
+  enabled: boolean().default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
