@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type WeekDayCode = "SUN" | "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT";
+export type WeekDayCode = "SUN" | "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT";
 
 export function mapApiStudioScheduleResponse(apiResponse: any[]) {
   const defaults = {

@@ -15,9 +15,14 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "./ui/button";
-import { useEffect } from "react";
-import { api } from "@/lib/api";
-import { mapApiStudioScheduleResponse } from "@/lib/map-api-studio-schedule-response";
+import { useEffect, useState } from "react";
+import { api, getStudioSchedule } from "@/lib/api";
+import {
+  mapApiStudioScheduleResponse,
+  type WeekDayCode,
+} from "@/lib/map-api-studio-schedule-response";
+import { LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export const businessHoursSchema = z.object({
   SUN: z.object({
@@ -73,7 +78,18 @@ interface StudioWorkScheduleProps {
   studioId: string;
 }
 
+type Schedule = {
+  id: string;
+  studioId: string;
+  dayOfWeek: WeekDayCode;
+  openTime: string;
+  closeTime: string;
+};
+
 export function StudioWorkSchedule({ studioId }: StudioWorkScheduleProps) {
+  const [apiData, setApiData] = useState<Schedule[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<FormData>({
     resolver: zodResolver(businessHoursSchema),
     defaultValues: {
@@ -88,27 +104,44 @@ export function StudioWorkSchedule({ studioId }: StudioWorkScheduleProps) {
   });
 
   useEffect(() => {
-    async function getStudioSchedule() {
-      const response = await api.get(`/schedule/studios/${studioId}`);
-      const data = response.data;
-
+    getStudioSchedule(studioId).then((data) => {
+      setApiData(data);
       const mapped = mapApiStudioScheduleResponse(data);
       form.reset(mapped);
-    }
-
-    getStudioSchedule();
+    });
   }, [form]);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
     const formatted = Object.entries(data)
       .filter(([, v]) => v.enabled)
-      .map(([dayCode, v]) => ({
-        dayOfWeek: dayCode,
-        openTime: v.start || null,
-        closeTime: v.end || null,
-      }));
+      .map(([dayCode, v]) => {
+        const existing = apiData.find((d) => d.dayOfWeek === dayCode);
 
-    console.log("Final:", formatted);
+        return {
+          id: existing?.id, // mantém o ID
+          studioId: existing?.studioId, // mantém o studioId
+          dayOfWeek: dayCode,
+          openTime: v.start,
+          closeTime: v.end,
+        };
+      });
+
+    try {
+      const response = await api.put("/schedule/update", formatted);
+
+      if (response && response.status === 200) {
+        getStudioSchedule(studioId).then((data) => {
+          setApiData(data);
+          const mapped = mapApiStudioScheduleResponse(data);
+          form.reset(mapped);
+        });
+        toast.success("Horário alterado com sucesso");
+      }
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -201,6 +234,9 @@ export function StudioWorkSchedule({ studioId }: StudioWorkScheduleProps) {
         type="submit"
         className="text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold my-6"
       >
+        {isLoading && (
+          <LoaderCircle className="text-primary animate-spin" size={18} />
+        )}
         Salvar horários
       </Button>
     </form>

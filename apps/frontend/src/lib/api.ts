@@ -43,3 +43,10 @@ export async function getStudents() {
 
   return data;
 }
+
+export async function getStudioSchedule(studioId: string) {
+  const response = await api.get(`/schedule/studios/${studioId}`);
+  const data = response.data;
+
+  return data;
+}
