@@ -20,7 +20,7 @@ const limiter = RateLimit({
   max: 100,
 });
 
-app.use(limiter);
+// app.use(limiter);
 app.use("/v1", routes);
 app.use(restExceptionHandler);
 

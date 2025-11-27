@@ -38,14 +38,28 @@ export const getInstructors = async () => {
 };
 
 export async function getStudents() {
-  const res = await api.get("/students");
-  const data = await res.data;
+  const response = await api.get("/students");
+  const data = await response.data;
 
   return data;
 }
 
 export async function getStudioSchedule(studioId: string) {
   const response = await api.get(`/schedule/studios/${studioId}`);
+  const data = response.data;
+
+  return data;
+}
+
+export async function getPlans() {
+  const response = await api.get("/plans");
+  const data = response.data;
+
+  return data;
+}
+
+export async function getSubscriptions() {
+  const response = await api.get("/subscriptions");
   const data = response.data;
 
   return data;

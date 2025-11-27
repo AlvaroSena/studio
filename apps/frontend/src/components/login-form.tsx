@@ -104,6 +104,7 @@ export function LoginForm({
           <Button
             type="submit"
             className="text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
+            disabled={isFormBeingSubmitted}
           >
             {isFormBeingSubmitted && <LoaderCircle className="animate-spin" />}
             Entrar

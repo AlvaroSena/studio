@@ -17,4 +17,13 @@ export class SubscriptionController {
 
     return response.status(201).json(subscription);
   }
+
+  async update(request: Request, response: Response) {
+    const { id } = request.params;
+    const { planId, studentId } = request.body;
+
+    const updatedSubscription = await this.subscriptionService.update({ id, planId, studentId });
+
+    return response.json(updatedSubscription);
+  }
 }

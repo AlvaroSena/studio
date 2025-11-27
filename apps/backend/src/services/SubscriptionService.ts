@@ -60,4 +60,42 @@ export class SubscriptionService {
 
     return subscription;
   }
+
+  async update({ id, planId, studentId }: { id: string; planId: string; studentId: string }) {
+    const planExists = await this.planRepository.findById(planId);
+
+    if (!planExists) {
+      throw new NotFoundException("Plan not found");
+    }
+
+    const todayDate = new Date();
+    const endDate = new Date(todayDate);
+
+    if (planExists.getPeriod() === "MONTHLY") {
+      endDate.setMonth(endDate.getMonth() + 1); // 30 days
+    }
+
+    if (planExists.getPeriod() === "ANNUAL") {
+      endDate.setMonth(endDate.getMonth() + 12); // a years
+    }
+
+    const studentExists = await this.studentRepository.findById(studentId);
+
+    if (!studentExists) {
+      throw new NotFoundException("Student not found");
+    }
+
+    const updatedSubscription = await this.repository.update(
+      new Subscription({
+        planId,
+        studentId,
+        status: "PENDING",
+        startDate: new Date(),
+        endDate,
+      }),
+      id,
+    );
+
+    return updatedSubscription;
+  }
 }

@@ -4,8 +4,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   IconCreditCard,
   IconInnerShadowTop,
-  IconReport,
   IconSettings,
+  IconCoin,
   IconUsers,
   IconBriefcase,
   IconStretching,
@@ -45,11 +45,6 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Planos",
-      url: "/plans",
-      icon: IconCreditCard,
-    },
-    {
       title: "Configurações",
       url: "/settings",
       icon: IconSettings,
@@ -57,9 +52,14 @@ const data = {
   ],
   documents: [
     {
-      name: "Relatórios",
-      url: "",
-      icon: IconReport,
+      name: "Planos",
+      url: "/plans",
+      icon: IconCreditCard,
+    },
+    {
+      name: "Assinaturas e Pagamentos",
+      url: "/billing",
+      icon: IconCoin,
     },
   ],
 };
