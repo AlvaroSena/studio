@@ -1,3 +1,4 @@
+import { BadRequestException } from "../exceptions/BadRequestException";
 import { ConflictException } from "../exceptions/ConflictException";
 import { NotFoundException } from "../exceptions/NotFoundException";
 import { Subscription } from "../models/Subscription";
@@ -97,5 +98,13 @@ export class SubscriptionService {
     );
 
     return updatedSubscription;
+  }
+
+  async removeMany(subscriptionIds: string[]) {
+    if (!subscriptionIds) {
+      throw new BadRequestException("IDs weren't provided");
+    }
+
+    await this.repository.deleteMany(subscriptionIds);
   }
 }

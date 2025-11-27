@@ -7,4 +7,5 @@ export interface ISubscriptionRepository {
   findByStudentId(studentId: string): Promise<Subscription | null>;
   update(subscription: Subscription, id: string): Promise<Subscription>;
   delete(id: string): Promise<void>;
+  deleteMany(subscriptionIds: string[]): Promise<void>;
 }

@@ -22,24 +22,13 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  CircleAlertIcon,
   CircleXIcon,
   Columns3Icon,
   EllipsisIcon,
-  TrashIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -73,6 +62,7 @@ import {
 } from "@/components/ui/table";
 import { ChangeSubscriptionDialog } from "./change-subscription-dialog";
 import { SubscribeStudentDialog } from "./subscribe-student-dialog";
+import { DeleteSubscriptionsDialog } from "./delete-subscriptions-dialog";
 
 type Item = {
   id: string;
@@ -84,22 +74,11 @@ type Item = {
   endDate: Date;
 };
 
-// Custom filter function for multi-column searching
 const multiColumnFilterFn: FilterFn<Item> = (row, filterValue) => {
   const searchableRowContent = `${row.original.studentName}`.toLowerCase();
   const searchTerm = (filterValue ?? "").toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
-
-// const statusFilterFn: FilterFn<Item> = (
-//   row,
-//   columnId,
-//   filterValue: string[]
-// ) => {
-//   if (!filterValue?.length) return true;
-//   const status = row.getValue(columnId) as string;
-//   return filterValue.includes(status);
-// };
 
 const columns: ColumnDef<Item>[] = [
   {
@@ -254,8 +233,6 @@ export function SubscriptionsTable({
     },
   ]);
 
-  const handleDeleteRows = () => {};
-
   const table = useReactTable({
     data,
     columns,
@@ -343,48 +320,16 @@ export function SubscriptionsTable({
           <SubscribeStudentDialog onRefetch={onRefetch} />
           {/* Delete button */}
           {table.getSelectedRowModel().rows.length > 0 && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button className="ml-auto" variant="outline">
-                  <TrashIcon
-                    className="-ms-1 opacity-60"
-                    size={16}
-                    aria-hidden="true"
-                  />
-                  Excluir
-                  <span className="-me-1 inline-flex h-5 max-h-full items-center rounded border bg-background px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground/70">
-                    {table.getSelectedRowModel().rows.length}
-                  </span>
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
-                  <div
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full border"
-                    aria-hidden="true"
-                  >
-                    <CircleAlertIcon className="opacity-80" size={16} />
-                  </div>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Esta ação não poderá ser desfeita. Você excluirá{" "}
-                      {table.getSelectedRowModel().rows.length}{" "}
-                      {table.getSelectedRowModel().rows.length === 1
-                        ? "assinatura"
-                        : "assinaturas"}
-                      .
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <Button variant="destructive" onClick={handleDeleteRows}>
-                    Excluir
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <DeleteSubscriptionsDialog
+              getSelectedIds={() => {
+                const selectedIds = table
+                  .getSelectedRowModel()
+                  .rows.map((row) => row.original.id);
+
+                return selectedIds;
+              }}
+              onRefetch={onRefetch}
+            />
           )}
         </div>
       </div>

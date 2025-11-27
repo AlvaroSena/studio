@@ -26,4 +26,12 @@ export class SubscriptionController {
 
     return response.json(updatedSubscription);
   }
+
+  async deleteMany(request: Request, response: Response) {
+    const { subscriptionIds } = request.body;
+
+    await this.subscriptionService.removeMany(subscriptionIds);
+
+    return response.status(204).send();
+  }
 }

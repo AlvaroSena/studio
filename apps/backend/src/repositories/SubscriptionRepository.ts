@@ -91,4 +91,10 @@ export class SubscriptionRepository implements ISubscriptionRepository {
   async delete(id: string): Promise<void> {
     await db.delete(subscriptions).where(eq(subscriptions.id, id));
   }
+
+  async deleteMany(subscriptionIds: string[]): Promise<void> {
+    for (const id of subscriptionIds) {
+      await db.delete(subscriptions).where(eq(subscriptions.id, id));
+    }
+  }
 }
