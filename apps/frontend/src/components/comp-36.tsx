@@ -1,8 +1,6 @@
-"use client"
+import { Label } from "react-aria-components";
 
-import { Label } from "react-aria-components"
-
-import { DateField, DateInput } from "@/components/ui/datefield-rac"
+import { DateField, DateInput } from "@/components/ui/datefield-rac";
 
 export default function Component() {
   return (
@@ -25,5 +23,5 @@ export default function Component() {
         </a>
       </p>
     </DateField>
-  )
+  );
 }
