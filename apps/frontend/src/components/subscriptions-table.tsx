@@ -72,6 +72,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ChangeSubscriptionDialog } from "./change-subscription-dialog";
+import { SubscribeStudentDialog } from "./subscribe-student-dialog";
 
 type Item = {
   id: string;
@@ -299,7 +300,6 @@ export function SubscriptionsTable({
               <CircleXIcon size={16} aria-hidden="true" />
             </button>
           )}
-          {/* Filter by status */}
           {/* Toggle columns visibility */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -340,6 +340,7 @@ export function SubscriptionsTable({
           </DropdownMenu>
         </div>
         <div className="flex items-center gap-3">
+          <SubscribeStudentDialog onRefetch={onRefetch} />
           {/* Delete button */}
           {table.getSelectedRowModel().rows.length > 0 && (
             <AlertDialog>
