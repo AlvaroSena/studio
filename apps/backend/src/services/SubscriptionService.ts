@@ -1,7 +1,7 @@
 import { BadRequestException } from "../exceptions/BadRequestException";
 import { ConflictException } from "../exceptions/ConflictException";
 import { NotFoundException } from "../exceptions/NotFoundException";
-import { Subscription } from "../models/Subscription";
+import { Subscription, subscriptionStatus } from "../models/Subscription";
 import { IPlanRepository } from "../repositories/IPlanRepository";
 import { IStudentRepository } from "../repositories/IStudentRepository";
 import { ISubscriptionRepository } from "../repositories/ISubscriptionRepository";
@@ -98,6 +98,16 @@ export class SubscriptionService {
     );
 
     return updatedSubscription;
+  }
+
+  async updateStatus(status: subscriptionStatus, id: string) {
+    const subscriptionExists = await this.repository.findById(id);
+
+    if (!subscriptionExists) {
+      throw new NotFoundException("Subscription not found");
+    }
+
+    await this.repository.updateStatus(status, id);
   }
 
   async removeMany(subscriptionIds: string[]) {

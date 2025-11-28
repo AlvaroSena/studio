@@ -144,7 +144,7 @@ const columns: ColumnDef<Item>[] = [
           </Badge>
         )}{" "}
         {row.getValue("status") === "SUSPENDED" && (
-          <Badge className="bg-primary/10 text-foreground">Suspendida</Badge>
+          <Badge className="bg-primary/10 text-foreground">Suspensa</Badge>
         )}
         {row.getValue("status") === "PENDING" && (
           <Badge className="bg-yellow-600/80 dark:bg-yellow-600/60 text-white">

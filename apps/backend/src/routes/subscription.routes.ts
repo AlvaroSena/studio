@@ -29,6 +29,11 @@ subscriptionRoutes.put(
   restVerifyCollaboratorToken(["admin", "recepcionist"]),
   (request: Request, response: Response) => subscriptionController.update(request, response),
 );
+subscriptionRoutes.patch(
+  "/subscriptions/status/:id",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => subscriptionController.updateStatus(request, response),
+);
 subscriptionRoutes.post(
   "/unsubscribe-many",
   restVerifyCollaboratorToken(["admin", "recepcionist"]),

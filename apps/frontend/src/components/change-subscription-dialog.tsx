@@ -17,6 +17,9 @@ import { api, getPlans } from "@/lib/api";
 import { Badge } from "./ui/badge";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
+import { UpdateSubscriptionStatus } from "./update-subscription-status";
 
 interface GetPlansResponse {
   id: string;
@@ -105,84 +108,109 @@ export function ChangeSubscriptionDialog({
           </DialogHeader>
         </div>
 
-        <form className="space-y-5">
-          <RadioGroup
-            className="gap-2"
-            value={selectedPlanId}
-            onValueChange={setSelectedPlanId}
-          >
-            {data.map((item) => (
-              <div
-                key={item.id}
-                className="relative flex w-full items-center gap-2 rounded-md border border-input px-4 py-3 shadow-xs outline-none has-data-[state=checked]:border-primary/50 has-data-[state=checked]:bg-accent"
+        <Tabs defaultValue="tab-1">
+          <ScrollArea>
+            <TabsList className="mb-3">
+              <TabsTrigger value="tab-1">Planos</TabsTrigger>
+              <TabsTrigger value="tab-2" className="group">
+                Status
+              </TabsTrigger>
+            </TabsList>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+          <TabsContent value="tab-1">
+            <form className="space-y-5">
+              <RadioGroup
+                className="gap-2"
+                value={selectedPlanId}
+                onValueChange={setSelectedPlanId}
               >
-                <RadioGroupItem
-                  aria-describedby={item.id}
-                  className="order-1 after:absolute after:inset-0"
-                  id={item.id}
-                  value={item.id}
-                />
-                <div className="grid grow gap-1">
-                  <Label htmlFor={item.id}>
-                    {item.period === "MONTHLY" && "Mensal"}
-                    {item.period === "QUARTELY" && "Trimestral"}
-                    {item.period === "SEMIANNUAL" && "Semestral"}
-                    {item.period === "ANNUAL" && (
-                      <div className="flex items-center gap-3 my-2">
-                        <span>Anual</span> <Badge>Popular</Badge>
-                      </div>
-                    )}
-                  </Label>
-                  {item.period === "ANNUAL" ? (
-                    <p className="text-muted-foreground text-xs" id={item.id}>
-                      <span className="line-through">
-                        12x de{" "}
-                        {Intl.NumberFormat("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        }).format(item.monthlyPriceInCents / 100)}
-                      </span>{" "}
-                      ou{" "}
-                      <span>
-                        {Intl.NumberFormat("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        }).format(item.totalPriceInCents / 100)}
-                      </span>
-                    </p>
-                  ) : (
-                    <p className="text-muted-foreground text-xs" id={item.id}>
-                      {Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      }).format(item.monthlyPriceInCents / 100)}
-                      /mês
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </RadioGroup>
+                {data.map((item) => (
+                  <div
+                    key={item.id}
+                    className="relative flex w-full items-center gap-2 rounded-md border border-input px-4 py-3 shadow-xs outline-none has-data-[state=checked]:border-primary/50 has-data-[state=checked]:bg-accent"
+                  >
+                    <RadioGroupItem
+                      aria-describedby={item.id}
+                      className="order-1 after:absolute after:inset-0"
+                      id={item.id}
+                      value={item.id}
+                    />
+                    <div className="grid grow gap-1">
+                      <Label htmlFor={item.id}>
+                        {item.period === "MONTHLY" && "Mensal"}
+                        {item.period === "QUARTELY" && "Trimestral"}
+                        {item.period === "SEMIANNUAL" && "Semestral"}
+                        {item.period === "ANNUAL" && (
+                          <div className="flex items-center gap-3 my-2">
+                            <span>Anual</span> <Badge>Popular</Badge>
+                          </div>
+                        )}
+                      </Label>
+                      {item.period === "ANNUAL" ? (
+                        <p
+                          className="text-muted-foreground text-xs"
+                          id={item.id}
+                        >
+                          <span className="line-through">
+                            12x de{" "}
+                            {Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(item.monthlyPriceInCents / 100)}
+                          </span>{" "}
+                          ou{" "}
+                          <span>
+                            {Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(item.totalPriceInCents / 100)}
+                          </span>
+                        </p>
+                      ) : (
+                        <p
+                          className="text-muted-foreground text-xs"
+                          id={item.id}
+                        >
+                          {Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(item.monthlyPriceInCents / 100)}
+                          /mês
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </RadioGroup>
 
-          <div className="grid gap-2">
-            {selectedPlanId && (
-              <Button
-                className="text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
-                type="button"
-                onClick={() => handleUpdateSubscription()}
-                disabled={isPending}
-              >
-                {isPending && <LoaderCircle className="animate-spin" />}
-                Alterar assinatura
-              </Button>
-            )}
-            <DialogClose asChild>
-              <Button className="w-full" type="button" variant="secondary">
-                Cancelar
-              </Button>
-            </DialogClose>
-          </div>
-        </form>
+              <div className="grid gap-2">
+                {selectedPlanId && (
+                  <Button
+                    className="text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
+                    type="button"
+                    onClick={() => handleUpdateSubscription()}
+                    disabled={isPending}
+                  >
+                    {isPending && <LoaderCircle className="animate-spin" />}
+                    Alterar assinatura
+                  </Button>
+                )}
+              </div>
+            </form>
+          </TabsContent>
+          <TabsContent value="tab-2">
+            <UpdateSubscriptionStatus
+              subscriptionId={subscriptionId}
+              onRefetch={onRefetch}
+            />
+          </TabsContent>
+        </Tabs>
+        <DialogClose asChild>
+          <Button className="w-full" type="button" variant="secondary">
+            Cancelar
+          </Button>
+        </DialogClose>
       </DialogContent>
     </Dialog>
   );

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../database";
 import { plans, students, subscriptions } from "../database/schema";
-import { Subscription } from "../models/Subscription";
+import { Subscription, subscriptionStatus } from "../models/Subscription";
 import { ISubscriptionRepository } from "./ISubscriptionRepository";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
@@ -86,6 +86,10 @@ export class SubscriptionRepository implements ISubscriptionRepository {
       .returning();
 
     return subscription;
+  }
+
+  async updateStatus(status: subscriptionStatus, id: string): Promise<void> {
+    await db.update(subscriptions).set({ status }).where(eq(subscriptions.id, id));
   }
 
   async delete(id: string): Promise<void> {

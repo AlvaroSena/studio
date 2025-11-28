@@ -27,6 +27,15 @@ export class SubscriptionController {
     return response.json(updatedSubscription);
   }
 
+  async updateStatus(request: Request, response: Response) {
+    const { id } = request.params;
+    const { status } = request.body;
+
+    await this.subscriptionService.updateStatus(status, id);
+
+    return response.status(204).send();
+  }
+
   async deleteMany(request: Request, response: Response) {
     const { subscriptionIds } = request.body;
 
