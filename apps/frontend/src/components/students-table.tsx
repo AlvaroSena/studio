@@ -211,7 +211,7 @@ export function StudentsTable() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           {/* Filter by name or email */}
-          <div className="relative">
+          <div className="hidden md:relative">
             <Input
               id={`${id}-input`}
               ref={inputRef}

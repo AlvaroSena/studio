@@ -31,7 +31,7 @@ export function StudioAgenda() {
   }, [id]);
 
   return (
-    <div className="mx-8">
+    <div className="mx-4 lg:mx-6">
       <Tabs defaultValue="tab-1">
         <ScrollArea>
           <TabsList className="mb-3">
