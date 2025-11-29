@@ -1,6 +1,9 @@
-// import { ClassSchedule } from "@/components/class-schedule";
+import { Navigate } from "react-router-dom";
 
 export function Admin() {
-  // return <ClassSchedule />;
-  return <h1>hello, world</h1>;
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <Navigate to="/studios" replace />;
+    </div>
+  );
 }

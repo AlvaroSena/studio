@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useSearchParams } from "react-router-dom";
+import { PasswordInput } from "./password-input";
 
 const loginFormSchema = z.object({
   email: z.email({ message: "Insira um email inválido" }),
@@ -87,7 +88,7 @@ export function LoginForm({
               Esqueci a senha
             </Link>
           </div>
-          <Input
+          <PasswordInput
             id="password"
             type="password"
             placeholder="Senha"
@@ -103,6 +104,7 @@ export function LoginForm({
           <Button
             type="submit"
             className="text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
+            disabled={isFormBeingSubmitted}
           >
             {isFormBeingSubmitted && <LoaderCircle className="animate-spin" />}
             Entrar

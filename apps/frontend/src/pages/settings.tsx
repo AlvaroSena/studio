@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 
 export function Settings() {
   return (
-    <div className="mx-8">
+    <div className="mx-4 lg:mx-6">
       <h1 className="text-xl poppins-semibold">Configurações</h1>
 
       <Separator className="my-8" />

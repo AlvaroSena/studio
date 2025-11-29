@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { RiCalendarCheckLine } from "@remixicon/react";
 import {
   addDays,
-  addHours,
   addMonths,
   addWeeks,
   endOfWeek,
@@ -44,6 +43,8 @@ import {
   WeekView,
 } from "@/components/event-calendar";
 import { ptBR } from "date-fns/locale";
+import { api } from "@/lib/api";
+import { isAxiosError } from "axios";
 
 export interface EventCalendarProps {
   events?: CalendarEvent[];
@@ -52,21 +53,22 @@ export interface EventCalendarProps {
   onEventDelete?: (eventId: string) => void;
   className?: string;
   initialView?: CalendarView;
+  onRefetch: () => Promise<void>;
 }
 
 export function EventCalendar({
   events = [],
-  onEventAdd,
   onEventUpdate,
   onEventDelete,
   className,
   initialView = "month",
+  onRefetch,
 }: EventCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<CalendarView>(initialView);
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null,
+    null
   );
 
   // Add keyboard shortcuts for view switching
@@ -163,32 +165,66 @@ export function EventCalendar({
     const newEvent: CalendarEvent = {
       id: "",
       title: "",
-      start: startTime,
-      end: addHours(startTime, 1),
-      allDay: false,
+      date: startTime,
+      studioId: "",
+      instructorId: "",
+      status: "SCHEDULED",
+      type: "NORMAL",
     };
     setSelectedEvent(newEvent);
     setIsEventDialogOpen(true);
   };
 
-  const handleEventSave = (event: CalendarEvent) => {
+  const handleEventSave = async (event: CalendarEvent) => {
     if (event.id) {
-      onEventUpdate?.(event);
-      // Show toast notification when an event is updated
-      toast(`Event "${event.title}" updated`, {
-        description: format(new Date(event.start), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
+      try {
+        const response = await api.put(`/classes/reschedule/${event.id}`, {
+          studioId: event.studioId,
+          instructorId: event.instructorId,
+          date: event.date,
+          status: event.status,
+          type: event.type,
+          // color: event.color,
+        });
+
+        if (response && response.status === 201) {
+          toast.success(`Aula "${event.title}" reagendada`, {
+            description: format(new Date(event.date), "MMM d, yyyy"),
+            position: "bottom-right",
+          });
+        }
+      } catch (err) {
+        if (isAxiosError(err) && err.status !== 201) {
+          toast.error("Erro ao reagendar aula. Tente novamente mais tarde.");
+        }
+      } finally {
+        onRefetch();
+      }
     } else {
-      onEventAdd?.({
-        ...event,
-        id: Math.random().toString(36).substring(2, 11),
-      });
-      // Show toast notification when an event is added
-      toast(`Event "${event.title}" added`, {
-        description: format(new Date(event.start), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
+      try {
+        const response = await api.post("/classes", {
+          title: event.title,
+          studioId: event.studioId,
+          instructorId: event.instructorId,
+          date: event.date,
+          status: event.status,
+          type: event.type,
+          color: event.color,
+        });
+
+        if (response && response.status === 201) {
+          toast.success(`Aula "${event.title}" agendada`, {
+            description: format(new Date(event.date), "MMM d, yyyy"),
+            position: "bottom-right",
+          });
+        }
+      } catch (err) {
+        if (isAxiosError(err) && err.status !== 201) {
+          toast.error("Erro ao agendar aula. Tente novamente mais tarde.");
+        }
+      } finally {
+        onRefetch();
+      }
     }
     setIsEventDialogOpen(false);
     setSelectedEvent(null);
@@ -203,7 +239,7 @@ export function EventCalendar({
     // Show toast notification when an event is deleted
     if (deletedEvent) {
       toast(`Event "${deletedEvent.title}" deleted`, {
-        description: format(new Date(deletedEvent.start), "MMM d, yyyy"),
+        description: format(new Date(deletedEvent.date), "MMM d, yyyy"),
         position: "bottom-left",
       });
     }
@@ -214,7 +250,7 @@ export function EventCalendar({
 
     // Show toast notification when an event is updated via drag and drop
     toast(`Event "${updatedEvent.title}" moved`, {
-      description: format(new Date(updatedEvent.start), "MMM d, yyyy"),
+      description: format(new Date(updatedEvent.date), "MMM d, yyyy"),
       position: "bottom-left",
     });
   };
@@ -246,7 +282,7 @@ export function EventCalendar({
               locale: ptBR,
             })}
           </span>
-          <span className="max-[479px]:hidden min-md:hidden" aria-hidden="true">
+          <span className="max-[479px]:hidden md:hidden" aria-hidden="true">
             {format(currentDate, "MMMM d, yyyy", {
               locale: ptBR,
             })}
@@ -296,7 +332,7 @@ export function EventCalendar({
         <div
           className={cn(
             "flex items-center justify-between p-2 sm:p-4",
-            className,
+            className
           )}
         >
           <div className="flex items-center gap-1 sm:gap-4">

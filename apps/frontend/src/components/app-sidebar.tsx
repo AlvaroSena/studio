@@ -2,11 +2,10 @@ import * as React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 import {
-  IconSchool,
   IconCreditCard,
   IconInnerShadowTop,
-  IconReport,
   IconSettings,
+  IconCoin,
   IconUsers,
   IconBriefcase,
   IconStretching,
@@ -43,18 +42,8 @@ const data = {
       url: "/studios",
       icon: IconStretching,
     },
-    {
-      title: "Aulas",
-      url: "/classes",
-      icon: IconSchool,
-    },
   ],
   navSecondary: [
-    {
-      title: "Planos",
-      url: "/plans",
-      icon: IconCreditCard,
-    },
     {
       title: "Configurações",
       url: "/settings",
@@ -63,9 +52,14 @@ const data = {
   ],
   documents: [
     {
-      name: "Relatórios",
-      url: "/reports",
-      icon: IconReport,
+      name: "Planos",
+      url: "/plans",
+      icon: IconCreditCard,
+    },
+    {
+      name: "Assinaturas e Pagamentos",
+      url: "/billing",
+      icon: IconCoin,
     },
   ],
 };
@@ -80,10 +74,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
+                <IconInnerShadowTop className="size-5!" />
                 <span className="text-base font-semibold">Define Pilates</span>
               </a>
             </SidebarMenuButton>

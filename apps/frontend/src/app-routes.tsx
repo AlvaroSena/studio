@@ -10,6 +10,9 @@ import { StudioAgenda } from "@/pages/studios/studio-agenda";
 import { Collaborators } from "@/pages/collaborators";
 import { ForgotPassword } from "@/pages/forgot-password";
 import { ResetPassword } from "@/pages/reset-password";
+import { Students } from "@/pages/students";
+import { Plans } from "@/pages/plans";
+import { Subscriptions } from "@/pages/subscriptions";
 
 export function AppRoutes() {
   return (
@@ -20,6 +23,16 @@ export function AppRoutes() {
           <Protected>
             <Layout>
               <Collaborators />
+            </Layout>
+          </Protected>
+        }
+      />
+      <Route
+        path="/students"
+        element={
+          <Protected>
+            <Layout>
+              <Students />
             </Layout>
           </Protected>
         }
@@ -55,6 +68,27 @@ export function AppRoutes() {
         }
       />
       <Route
+        path="/plans"
+        element={
+          <Protected>
+            <Layout>
+              <Plans />
+            </Layout>
+          </Protected>
+        }
+      />
+      <Route
+        path="/billing"
+        element={
+          <Protected>
+            <Layout>
+              <Subscriptions />
+            </Layout>
+          </Protected>
+        }
+      />
+
+      <Route
         path="/settings"
         element={
           <Protected>
@@ -64,29 +98,29 @@ export function AppRoutes() {
           </Protected>
         }
       />
-      <Route 
-        path="/login" 
+      <Route
+        path="/login"
         element={
           <AuthLayout>
             <Login />
           </AuthLayout>
-        } 
+        }
       />
-      <Route 
-        path="/forgot-password" 
+      <Route
+        path="/forgot-password"
         element={
           <AuthLayout>
             <ForgotPassword />
           </AuthLayout>
-        } 
+        }
       />
-      <Route 
-        path="/reset-password" 
+      <Route
+        path="/reset-password"
         element={
           <AuthLayout>
             <ResetPassword />
           </AuthLayout>
-        } 
+        }
       />
     </Routes>
   );

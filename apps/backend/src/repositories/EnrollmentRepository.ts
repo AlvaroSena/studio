@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../database";
-import { enrollments } from "../database/schema";
+import { classes, enrollments, students } from "../database/schema";
 import { Enrollment } from "../models/Enrollment";
 import { IEnrollmentRepository } from "./IEnrollmentRepository";
 
@@ -19,7 +19,19 @@ export class EnrollmentRepository implements IEnrollmentRepository {
   }
 
   async findAll(): Promise<any[]> {
-    const result = await db.select().from(enrollments);
+    const result = await db
+      .select({
+        id: enrollments.id,
+        classId: enrollments.classId,
+        studentId: enrollments.studentId,
+        studentName: students.name,
+        classTitle: classes.title,
+        classDate: classes.date,
+        classType: classes.type,
+      })
+      .from(enrollments)
+      .leftJoin(students, eq(enrollments.studentId, students.id))
+      .leftJoin(classes, eq(enrollments.classId, classes.id));
 
     return result;
   }
@@ -59,5 +71,11 @@ export class EnrollmentRepository implements IEnrollmentRepository {
 
   async delete(id: string): Promise<void> {
     await db.delete(enrollments).where(eq(enrollments.id, id));
+  }
+
+  async deleteMany(enrollmentsIds: string[]): Promise<void> {
+    for (const id of enrollmentsIds) {
+      await db.delete(enrollments).where(eq(enrollments.id, id));
+    }
   }
 }

@@ -1,8 +1,9 @@
 import { relations } from "drizzle-orm";
-import { pgTable, varchar, pgEnum, timestamp, date, text, integer } from "drizzle-orm/pg-core";
+import { pgTable, varchar, pgEnum, timestamp, date, text, integer, boolean } from "drizzle-orm/pg-core";
 
 export const collaboratorRoleEnum = pgEnum("collaborator_role", ["admin", "recepcionist", "instructor"]);
 export const classStatusEnum = pgEnum("class_status", ["SCHEDULED", "DONE", "CANCELED"]);
+export const classColorEnum = pgEnum("class_color", ["sky", "amber", "violet", "rose", "emerald", "orange"]);
 export const classTypeEnum = pgEnum("class_type", ["NORMAL", "REPLACEMENT", "EXPERIMENTAL"]);
 export const planPeriodEnum = pgEnum("plan_period", ["MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL"]);
 export const paymentMethodEnum = pgEnum("payment_method", ["PIX", "CASH", "CREDIT_CARD", "DEBIT_CARD"]);
@@ -70,6 +71,7 @@ export const studioSchedule = pgTable("studio_schedule", {
   dayOfWeek: text("day_of_week").notNull(),
   openTime: text("open_time").notNull(),
   closeTime: text("close_time").notNull(),
+  enabled: boolean().default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -83,11 +85,13 @@ export const studioScheduleRelations = relations(studioSchedule, ({ one }) => ({
 
 export const classes = pgTable("classes", {
   id: varchar({ length: 255 }).primaryKey(),
+  title: text().notNull(),
   studioId: varchar("studio_id", { length: 255 }).notNull(),
   instructorId: varchar("instructor_id", { length: 255 }).notNull(),
   date: timestamp({ mode: "date" }).notNull(),
   status: classStatusEnum("status").notNull(),
   type: classTypeEnum("type").notNull(),
+  color: classColorEnum("color").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

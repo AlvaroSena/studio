@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../database";
-import { subscriptions } from "../database/schema";
-import { Subscription } from "../models/Subscription";
+import { plans, students, subscriptions } from "../database/schema";
+import { Subscription, subscriptionStatus } from "../models/Subscription";
 import { ISubscriptionRepository } from "./ISubscriptionRepository";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
@@ -21,7 +21,19 @@ export class SubscriptionRepository implements ISubscriptionRepository {
   }
 
   async findAll(): Promise<any[]> {
-    const result = await db.select().from(subscriptions);
+    const result = await db
+      .select({
+        id: subscriptions.id,
+        status: subscriptions.status,
+        startDate: subscriptions.startDate,
+        endDate: subscriptions.endDate,
+        studentId: students.id,
+        studentName: students.name,
+        planPeriod: plans.period,
+      })
+      .from(subscriptions)
+      .leftJoin(students, eq(subscriptions.studentId, students.id))
+      .leftJoin(plans, eq(subscriptions.planId, plans.id));
 
     return result;
   }
@@ -60,11 +72,33 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     });
   }
 
-  update(subscription: Subscription, id: string): Promise<Subscription> {
-    throw new Error("Method not implemented.");
+  async update(subscription: Subscription, id: string): Promise<Subscription> {
+    await db
+      .update(subscriptions)
+      .set({
+        planId: subscription.getPlanId(),
+        studentId: subscription.getStudentId(),
+        startDate: subscription.getStartDate(),
+        endDate: subscription.getEndDate(),
+        status: subscription.getStatus(),
+      })
+      .where(eq(subscriptions.id, id))
+      .returning();
+
+    return subscription;
+  }
+
+  async updateStatus(status: subscriptionStatus, id: string): Promise<void> {
+    await db.update(subscriptions).set({ status }).where(eq(subscriptions.id, id));
   }
 
   async delete(id: string): Promise<void> {
     await db.delete(subscriptions).where(eq(subscriptions.id, id));
+  }
+
+  async deleteMany(subscriptionIds: string[]): Promise<void> {
+    for (const id of subscriptionIds) {
+      await db.delete(subscriptions).where(eq(subscriptions.id, id));
+    }
   }
 }

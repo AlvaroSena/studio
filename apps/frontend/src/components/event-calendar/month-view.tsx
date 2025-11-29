@@ -160,8 +160,8 @@ export function MonthView({
                       className="min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]"
                     >
                       {sortEvents(allDayEvents).map((event, index) => {
-                        const eventStart = new Date(event.start);
-                        const eventEnd = new Date(event.end);
+                        const eventStart = new Date(event.date);
+                        const eventEnd = new Date(event.date);
                         const isFirstDay = isSameDay(day, eventStart);
                         const isLastDay = isSameDay(day, eventEnd);
 
@@ -173,7 +173,9 @@ export function MonthView({
                         if (!isFirstDay) {
                           return (
                             <div
-                              key={`spanning-${event.id}-${day.toISOString().slice(0, 10)}`}
+                              key={`spanning-${event.id}-${day
+                                .toISOString()
+                                .slice(0, 10)}`}
                               className="aria-hidden:hidden"
                               aria-hidden={isHidden ? "true" : undefined}
                             >
@@ -185,14 +187,6 @@ export function MonthView({
                                 isLastDay={isLastDay}
                               >
                                 <div className="invisible" aria-hidden={true}>
-                                  {!event.allDay && (
-                                    <span>
-                                      {format(
-                                        new Date(event.start),
-                                        "h:mm",
-                                      )}{" "}
-                                    </span>
-                                  )}
                                   {event.title}
                                 </div>
                               </EventItem>
@@ -245,8 +239,8 @@ export function MonthView({
                               </div>
                               <div className="space-y-1">
                                 {sortEvents(allEvents).map((event) => {
-                                  const eventStart = new Date(event.start);
-                                  const eventEnd = new Date(event.end);
+                                  const eventStart = new Date(event.date);
+                                  const eventEnd = new Date(event.date);
                                   const isFirstDay = isSameDay(day, eventStart);
                                   const isLastDay = isSameDay(day, eventEnd);
 

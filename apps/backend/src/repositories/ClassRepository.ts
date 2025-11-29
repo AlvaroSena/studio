@@ -11,11 +11,13 @@ export class ClassRepository implements IClassRepository {
       .insert(classes)
       .values({
         id: data.getId(),
+        title: data.getTitle(),
         studioId: data.getStudioId(),
         instructorId: data.getInstructorId(),
         date: new Date(data.getDate()),
         status: data.getStatus(),
         type: data.getType(),
+        color: data.getColor(),
       })
       .returning();
 
@@ -45,11 +47,13 @@ export class ClassRepository implements IClassRepository {
 
     return new Class({
       id: classFound.id,
+      title: classFound.title,
       studioId: classFound.studioId,
       instructorId: classFound.instructorId,
       date: classFound.date,
       status: classFound.status,
       type: classFound.type,
+      color: classFound.color,
     });
   }
 
@@ -76,11 +80,13 @@ export class ClassRepository implements IClassRepository {
 
     return new Class({
       id: classFound.class.id,
+      title: classFound.class.title,
       studioId: classFound.class.studioId,
       instructorId: classFound.class.instructorId,
       date: classFound.class.date,
       status: classFound.class.status,
       type: classFound.class.type,
+      color: classFound.class.color,
       enrollments: classFound.enrollments as EnrollmentType[],
     });
   }

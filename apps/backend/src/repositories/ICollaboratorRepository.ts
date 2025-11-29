@@ -1,8 +1,9 @@
-import { Collaborator } from "../models/Collaborator";
+import { Collaborator, CollaboratorRole } from "../models/Collaborator";
 
 export interface ICollaboratorRepository {
   save(collaborator: Collaborator): Promise<Collaborator>;
   findAll(): Promise<Omit<Collaborator, "password">[]>;
+  findAllByRole(role: CollaboratorRole): Promise<Omit<Collaborator, "password">[]>;
   findById(id: string): Promise<Collaborator | null>;
   findByEmail(email: string): Promise<Collaborator | null>;
   update(collaborator: Collaborator): Promise<Collaborator>;

@@ -7,4 +7,5 @@ export interface IEnrollmentRepository {
   findById(id: string): Promise<Enrollment | null>;
   update(enrollment: Enrollment, id: string): Promise<Enrollment>;
   delete(id: string): Promise<void>;
+  deleteMany(enrollmentsIds: string[]): Promise<void>;
 }

@@ -6,15 +6,17 @@ export class StudioSchedule extends Model {
   private dayOfWeek!: string;
   private openTime!: string;
   private closeTime!: string;
+  private enabled!: boolean;
 
-  constructor({ id, studioId, dayOfWeek, openTime, closeTime, createdAt, updatedAt }: StudioScheduleType) {
+  constructor({ id, studioId, dayOfWeek, openTime, closeTime, enabled, createdAt, updatedAt }: StudioScheduleType) {
     super(id, createdAt, updatedAt);
 
-    studioScheduleSchema.parse({ studioId, dayOfWeek, openTime, closeTime });
+    studioScheduleSchema.parse({ studioId, dayOfWeek, openTime, closeTime, enabled });
     this.studioId = studioId;
     this.dayOfWeek = dayOfWeek;
     this.openTime = openTime;
     this.closeTime = closeTime;
+    this.enabled = enabled;
   }
 
   getStudioId() {
@@ -47,5 +49,13 @@ export class StudioSchedule extends Model {
 
   setCloseTime(closeTime: string) {
     this.closeTime = closeTime;
+  }
+
+  getEnabled() {
+    return this.enabled;
+  }
+
+  setEnabled(enabled: boolean) {
+    this.enabled = enabled;
   }
 }

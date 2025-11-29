@@ -56,24 +56,22 @@ export function DayView({
   const dayEvents = useMemo(() => {
     return events
       .filter((event) => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
+        const eventStart = new Date(event.date);
+        const eventEnd = new Date(event.date);
         return (
           isSameDay(currentDate, eventStart) ||
           isSameDay(currentDate, eventEnd) ||
           (currentDate > eventStart && currentDate < eventEnd)
         );
       })
-      .sort(
-        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-      );
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [currentDate, events]);
 
   // Filter all-day events
   const allDayEvents = useMemo(() => {
     return dayEvents.filter((event) => {
       // Include explicitly marked all-day events or multi-day events
-      return event.allDay || isMultiDayEvent(event);
+      return isMultiDayEvent(event);
     });
   }, [dayEvents]);
 
@@ -81,7 +79,7 @@ export function DayView({
   const timeEvents = useMemo(() => {
     return dayEvents.filter((event) => {
       // Exclude all-day events and multi-day events
-      return !event.allDay && !isMultiDayEvent(event);
+      return !isMultiDayEvent(event);
     });
   }, [dayEvents]);
 
@@ -92,10 +90,10 @@ export function DayView({
 
     // Sort events by start time and duration
     const sortedEvents = [...timeEvents].sort((a, b) => {
-      const aStart = new Date(a.start);
-      const bStart = new Date(b.start);
-      const aEnd = new Date(a.end);
-      const bEnd = new Date(b.end);
+      const aStart = new Date(a.date);
+      const bStart = new Date(b.date);
+      const aEnd = new Date(a.date);
+      const bEnd = new Date(b.date);
 
       // First sort by start time
       if (aStart < bStart) return -1;
@@ -111,8 +109,8 @@ export function DayView({
     const columns: { event: CalendarEvent; end: Date }[][] = [];
 
     sortedEvents.forEach((event) => {
-      const eventStart = new Date(event.start);
-      const eventEnd = new Date(event.end);
+      const eventStart = new Date(event.date);
+      const eventEnd = new Date(event.date);
 
       // Adjust start and end times if they're outside this day
       const adjustedStart = isSameDay(currentDate, eventStart)
@@ -142,8 +140,8 @@ export function DayView({
           const overlaps = col.some((c) =>
             areIntervalsOverlapping(
               { start: adjustedStart, end: adjustedEnd },
-              { start: new Date(c.event.start), end: new Date(c.event.end) },
-            ),
+              { start: new Date(c.event.date), end: new Date(c.event.date) }
+            )
           );
           if (!overlaps) {
             placed = true;
@@ -183,7 +181,7 @@ export function DayView({
   const showAllDaySection = allDayEvents.length > 0;
   const { currentTimePosition, currentTimeVisible } = useCurrentTimeIndicator(
     currentDate,
-    "day",
+    "day"
   );
 
   return (
@@ -198,8 +196,8 @@ export function DayView({
             </div>
             <div className="border-border/70 relative border-r p-1 last:border-r-0">
               {allDayEvents.map((event) => {
-                const eventStart = new Date(event.start);
-                const eventEnd = new Date(event.end);
+                const eventStart = new Date(event.date);
+                const eventEnd = new Date(event.date);
                 const isFirstDay = isSameDay(currentDate, eventStart);
                 const isLastDay = isSameDay(currentDate, eventEnd);
 
@@ -227,7 +225,7 @@ export function DayView({
           {hours.map((hour, index) => (
             <div
               key={hour.toString()}
-              className="border-border/70 relative h-[var(--week-cells-height)] border-b last:border-b-0"
+              className="border-border/70 relative h-(--week-cells-height) border-b last:border-b-0"
             >
               {index > 0 && (
                 <span className="bg-background text-muted-foreground/70 absolute -top-3 left-0 flex h-6 w-16 max-w-full items-center justify-end pe-2 text-[10px] sm:pe-4 sm:text-xs">
@@ -272,7 +270,7 @@ export function DayView({
             >
               <div className="relative flex items-center">
                 <div className="bg-primary absolute -left-1 h-2 w-2 rounded-full"></div>
-                <div className="bg-primary h-[2px] w-full"></div>
+                <div className="bg-primary h-0.5 w-full"></div>
               </div>
             </div>
           )}
@@ -283,7 +281,7 @@ export function DayView({
             return (
               <div
                 key={hour.toString()}
-                className="border-border/70 relative h-[var(--week-cells-height)] border-b last:border-b-0"
+                className="border-border/70 relative h-(--week-cells-height) border-b last:border-b-0"
               >
                 {/* Quarter-hour intervals */}
                 {[0, 1, 2, 3].map((quarter) => {
@@ -302,7 +300,7 @@ export function DayView({
                         quarter === 2 &&
                           "top-[calc(var(--week-cells-height)/4*2)]",
                         quarter === 3 &&
-                          "top-[calc(var(--week-cells-height)/4*3)]",
+                          "top-[calc(var(--week-cells-height)/4*3)]"
                       )}
                       onClick={() => {
                         const startTime = new Date(currentDate);

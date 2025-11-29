@@ -23,7 +23,7 @@ studioScheduleRoutes.get("/studios/:studioId", (request: Request, response: Resp
 );
 
 studioScheduleRoutes.put(
-  "/:id",
+  "/update",
   restVerifyCollaboratorToken(["admin", "recepcionist"]),
   (request: Request, response: Response) => studioScheduleController.update(request, response),
 );

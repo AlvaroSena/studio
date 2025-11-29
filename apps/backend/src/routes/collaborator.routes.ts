@@ -14,6 +14,11 @@ const collaboratorController = new CollaboratorController(collaboratorService);
 collaboratorRoutes.get("/", restVerifyCollaboratorToken(["admin"]), (request: Request, response: Response) =>
   collaboratorController.listAll(request, response),
 );
+collaboratorRoutes.get(
+  "/roles/:role",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => collaboratorController.listAllByRole(request, response),
+);
 collaboratorRoutes.post("/", (request: Request, response: Response) =>
   collaboratorController.create(request, response),
 );

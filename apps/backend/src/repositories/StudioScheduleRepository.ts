@@ -1,22 +1,20 @@
-import { eq } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { db } from "../database";
 import { studioSchedule } from "../database/schema";
 import { StudioSchedule } from "../models/StudioSchedule";
 import { IStudioScheduleRepository } from "./IStudioScheduleRepository";
-import { String } from "aws-sdk/clients/appstream";
 
 export class StudioScheduleRepository implements IStudioScheduleRepository {
-  async save(schedule: StudioSchedule): Promise<StudioSchedule> {
-    await db
-      .insert(studioSchedule)
-      .values({
-        id: schedule.getId(),
-        studioId: schedule.getStudioId(),
-        dayOfWeek: schedule.getDayOfWeek(),
-        openTime: schedule.getOpenTime(),
-        closeTime: schedule.getCloseTime(),
-      })
-      .returning();
+  async save(schedule: StudioSchedule[]): Promise<StudioSchedule[]> {
+    const data = schedule.map((item) => ({
+      id: item.getId(),
+      studioId: item.getStudioId(),
+      dayOfWeek: item.getDayOfWeek(),
+      openTime: item.getOpenTime(),
+      closeTime: item.getCloseTime(),
+    }));
+
+    await db.insert(studioSchedule).values(data).returning();
 
     return schedule;
   }
@@ -42,21 +40,24 @@ export class StudioScheduleRepository implements IStudioScheduleRepository {
       dayOfWeek: schedule.dayOfWeek,
       openTime: schedule.openTime,
       closeTime: schedule.closeTime,
+      enabled: schedule.enabled,
     });
   }
 
-  async update(schedule: StudioSchedule, id: String): Promise<StudioSchedule> {
-    await db
-      .update(studioSchedule)
-      .set({
-        dayOfWeek: schedule.getDayOfWeek(),
-        openTime: schedule.getOpenTime(),
-        closeTime: schedule.getCloseTime(),
-      })
-      .where(eq(studioSchedule.id, id))
-      .returning();
+  async update(items: StudioSchedule[]) {
+    for (const item of items) {
+      await db
+        .update(studioSchedule)
+        .set({
+          openTime: item.getOpenTime(),
+          closeTime: item.getCloseTime(),
+          dayOfWeek: item.getDayOfWeek(),
+          enabled: item.getEnabled(),
+        })
+        .where(eq(studioSchedule.id, item.getId()));
+    }
 
-    return schedule;
+    return items;
   }
 
   async delete(id: string): Promise<void> {

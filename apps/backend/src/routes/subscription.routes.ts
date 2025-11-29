@@ -24,3 +24,18 @@ subscriptionRoutes.post(
   restVerifyCollaboratorToken(["admin", "recepcionist"]),
   (request: Request, response: Response) => subscriptionController.create(request, response),
 );
+subscriptionRoutes.put(
+  "/resubscribe/:id",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => subscriptionController.update(request, response),
+);
+subscriptionRoutes.patch(
+  "/subscriptions/status/:id",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => subscriptionController.updateStatus(request, response),
+);
+subscriptionRoutes.post(
+  "/unsubscribe-many",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => subscriptionController.deleteMany(request, response),
+);
