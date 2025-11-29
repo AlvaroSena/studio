@@ -1,24 +1,71 @@
-# Define Pilates
+# 🧘‍♀️ Define Pilates — Sistema de Gestão para Estúdios de Pilates
 
-# Coisas que só a recepcionista e admin podem fazer
+O Define Pilates é um sistema completo de gestão para estúdios, permitindo administrar alunos, planos, assinaturas, aulas, agenda, horários de funcionamento e muito mais.
+Ele utiliza uma arquitetura monorepo, separando frontend, backend e pacotes compartilhados.
 
-- [x] Marcar aula experimental
-- [x] Cadastrar aluno
-- [x] Vender plano
-- [x] Agendar aulas fixas
-- [x] Desmarcar aula
-- [x] Reagendar aula
-- [x] Alterar hora e dia de aula fixa.
+## 📂 Estrutura do Projeto
 
-# Coias que o admin pode fazer
+```bash
+define-pilates/
+│
+├── apps/
+│   ├── backend/        # API em Node.js + TypeScript + Express (Drizzle ORM)
+│   └── frontend/       # Interface em React + Vite + Tailwind + Shadcn UI
+│
+└── README.md
+```
 
-- tudo o que a recepcionista faz
-- [x] cancelar plano
-- [x] Abrir agendas individuais. (uma por Studio)
+### Tecnologias Utilizadas
 
-# Coias que o instrutor pode fazer
+- Backend
 
-- [x] Ver agenda no qual está contratado
-- Visualizar somente o nome do Aluno. ( não ter acesso
-  aos dados pessoais).
-- [x] Reagendar aula
+  - Node.js
+  - TypeScript
+  - Express
+  - Drizzle ORM
+  - PostgreSQL
+  - Zod
+  - tsx
+  - Dotenv
+
+- Frontend
+
+  - React
+  - TypeScript
+  - Vite
+  - TailwindCSS
+  - Shadcn UI
+  - React Hook Form
+
+- Infra / Dev
+  - pnpm workspaces
+  - Monorepo architecture
+  - Docker
+  - Vercel (frontend)
+
+### 🚀 Instalação e Configuração
+
+1️⃣ Pré-requisitos
+
+Você precisa ter instalado:
+
+- Node.js 18+
+- Git
+- Postgres instalado localmente ou conta no Neon
+
+### 📦 Instalação
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/alvarosena/studio.git
+cd studio
+```
+
+Instalar dependências:
+
+```bash
+npm install
+```
+
+continua...
