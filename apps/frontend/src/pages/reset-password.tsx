@@ -14,5 +14,5 @@ export function ResetPassword() {
 
       <ResetPasswordForm />
     </div>
-  )
+  );
 }

@@ -7,9 +7,9 @@ import { useContext, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { LoaderCircle } from "lucide-react";
 import { AuthContext } from "@/contexts/AuthContext";
+import { PasswordInput } from "./password-input";
 
 const resetPasswordFormSchema = z.object({
   newPassword: z
@@ -36,11 +36,14 @@ export function ResetPasswordForm({
   const { resetPassword } = useContext(AuthContext);
   const [isFormBeingSubmitted, setIsFormBeingSubmitted] = useState(false);
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const token = searchParams.get("token") as string;
   const email = searchParams.get("email") as string;
 
-  const handleForgotPassword = async ({ newPassword, confirmPassword }: ResetPasswordFormScham) => {
+  const handleForgotPassword = async ({
+    newPassword,
+    confirmPassword,
+  }: ResetPasswordFormScham) => {
     setIsFormBeingSubmitted(true);
 
     if (newPassword !== confirmPassword) {
@@ -49,10 +52,10 @@ export function ResetPasswordForm({
       return;
     }
 
-    const status = await resetPassword(email, token, newPassword)
+    const status = await resetPassword(email, token, newPassword);
     setIsFormBeingSubmitted(false);
 
-    if(status === "success"){
+    if (status === "success") {
       navigate("/login");
     }
   };
@@ -66,13 +69,13 @@ export function ResetPasswordForm({
       <FieldGroup>
         <Field>
           <FieldLabel
-            htmlFor="email"
+            htmlFor="password"
             className="poppins-medium text-emerald-800 dark:text-foreground"
           >
             Nova senha
           </FieldLabel>
-          <Input
-            id="email"
+          <PasswordInput
+            id="password"
             type="password"
             placeholder="Nova senha"
             {...register("newPassword")}
@@ -86,13 +89,13 @@ export function ResetPasswordForm({
 
         <Field>
           <FieldLabel
-            htmlFor="email"
+            htmlFor="password"
             className="poppins-medium text-emerald-800 dark:text-foreground"
           >
             Confirmar senha
           </FieldLabel>
-          <Input
-            id="email"
+          <PasswordInput
+            id="password"
             type="password"
             placeholder="Confirmar senha"
             {...register("confirmPassword")}
