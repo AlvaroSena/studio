@@ -15,7 +15,6 @@ export function Enrollments() {
 
   const loadEnrollments = async () => {
     const data = await getEnrollments();
-    console.log(data);
 
     if (data) {
       setEnrollments(data);

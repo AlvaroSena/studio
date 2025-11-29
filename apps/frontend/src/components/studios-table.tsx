@@ -6,23 +6,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getStudios } from "@/lib/api";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-interface StudioType {
+type StudioType = {
   id: string;
   name: string;
   address: string;
+};
+
+interface StudiosTableProps {
+  data: StudioType[];
+  onRefetch: () => Promise<void>;
 }
 
-export function StudiosTable() {
-  const [items, setItems] = useState<StudioType[]>([]);
-
-  useEffect(() => {
-    getStudios().then((data) => setItems(data));
-  }, []);
-
+export function StudiosTable({ data }: StudiosTableProps) {
   return (
     <div>
       <Table>
@@ -34,7 +31,7 @@ export function StudiosTable() {
         </TableHeader>
         <tbody aria-hidden="true" className="table-row h-2"></tbody>
         <TableBody className="[&_td:first-child]:rounded-l-lg [&_td:last-child]:rounded-r-lg">
-          {items.map((item) => (
+          {data.map((item) => (
             <TableRow
               key={item.id}
               className="border-none odd:bg-muted/50 hover:bg-transparent odd:hover:bg-muted/50"
