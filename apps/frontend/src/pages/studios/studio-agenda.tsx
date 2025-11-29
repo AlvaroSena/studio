@@ -14,12 +14,20 @@ export function StudioAgenda() {
   const { id } = useParams();
   const [classes, setClasses] = useState<CalendarEvent[]>([]);
 
-  useEffect(() => {
+  const loadEvents = async () => {
     if (!id) {
       return;
     }
 
-    getStudioClasses(id).then((data) => setClasses(data));
+    const data = await getStudioClasses(id);
+
+    if (data) {
+      setClasses(data);
+    }
+  };
+
+  useEffect(() => {
+    loadEvents();
   }, [id]);
 
   return (
@@ -55,7 +63,7 @@ export function StudioAgenda() {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
         <TabsContent value="tab-1">
-          <ClassSchedule events={classes} />
+          <ClassSchedule events={classes} onRefetch={() => loadEvents()} />
         </TabsContent>
         <TabsContent value="tab-2">
           {id && (

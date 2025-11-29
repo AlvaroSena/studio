@@ -35,10 +35,11 @@ import {
   StartHour,
 } from "@/components/event-calendar/constants";
 
-import { useId } from "react";
 import { SelectGroup, SelectLabel } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { StatusDot } from "../status-dot";
+import { api } from "@/lib/api";
+import { useParams } from "react-router-dom";
 
 interface EventDialogProps {
   event: CalendarEvent | null;
@@ -48,6 +49,12 @@ interface EventDialogProps {
   onDelete: (eventId: string) => void;
 }
 
+type InstructorType = {
+  id: string;
+  name: string;
+  photoUrl: string | null;
+};
+
 export function EventDialog({
   event,
   isOpen,
@@ -55,7 +62,7 @@ export function EventDialog({
   onSave,
   onDelete,
 }: EventDialogProps) {
-  const id = useId();
+  const params = useParams();
 
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -64,11 +71,23 @@ export function EventDialog({
   const [color, setColor] = useState<EventColor>("sky");
   const [error, setError] = useState<string | null>(null);
   const [startDateOpen, setStartDateOpen] = useState(false);
+  const [instructors, setInstructors] = useState<InstructorType[]>([]);
+  const [selectedInstructorId, setSelectedInstructorId] = useState("");
+  const [selectedClassType, setSelectedClassType] = useState("");
 
-  // Debug log to check what event is being passed
   useEffect(() => {
-    console.log("EventDialog received event:", event);
-  }, [event]);
+    const fetchInstructors = async () => {
+      const response = await api.get("/collaborators/roles/instructor");
+
+      const data = response.data;
+
+      if (data) {
+        setInstructors(data);
+      }
+    };
+
+    fetchInstructors();
+  }, []);
 
   useEffect(() => {
     if (event) {
@@ -129,12 +148,16 @@ export function EventDialog({
 
     const eventTitle = title.trim() ? title : "(no title)";
 
+    if (!params.id) {
+      return;
+    }
+
     onSave({
       id: event?.id || "",
       title: eventTitle,
       date: start,
-      studioId: "",
-      instructorId: "",
+      studioId: params.id,
+      instructorId: selectedInstructorId,
       status: "SCHEDULED",
       type: "NORMAL",
       color,
@@ -289,77 +312,67 @@ export function EventDialog({
           </div>
 
           <div className="*:not-first:mt-2">
-            <Label htmlFor={id}>Instrutor</Label>
-            <Select defaultValue="1">
+            <Label htmlFor="select-instructor">Instrutor</Label>
+            <Select
+              value={selectedInstructorId}
+              onValueChange={setSelectedInstructorId}
+            >
               <SelectTrigger
-                id={id}
+                id="select-instructor"
                 className="ps-2 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_img]:shrink-0"
               >
-                <SelectValue placeholder="Select framework" />
+                <SelectValue placeholder="Selecione um instrutor" />
               </SelectTrigger>
               <SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]>span]:flex [&_*[role=option]>span]:items-center [&_*[role=option]>span]:gap-2">
                 <SelectGroup>
                   <SelectLabel className="ps-2">
                     Selecione o instrutor
                   </SelectLabel>
-                  <SelectItem value="1">
-                    <Avatar className="h-6 w-6 rounded-full">
-                      <AvatarImage
-                        src=""
-                        alt="Frank Allison"
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="rounded-lg">JE</AvatarFallback>
-                    </Avatar>
-                    <span className="truncate">Jenny Hamilton</span>
-                  </SelectItem>
-                  <SelectItem value="2">
-                    <Avatar className="h-6 w-6 rounded-full">
-                      <AvatarImage
-                        src=""
-                        alt="Xavier Guerra"
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="rounded-lg">XA</AvatarFallback>
-                    </Avatar>
-                    <span className="truncate">Paul Smith</span>
-                  </SelectItem>
-                  <SelectItem value="3">
-                    <Avatar className="h-6 w-6 rounded-full">
-                      <AvatarImage
-                        src=""
-                        alt="Anne Kelley"
-                        className="object-cover"
-                      />
-                      <AvatarFallback className="rounded-lg">AN</AvatarFallback>
-                    </Avatar>
-                    <span className="truncate">Anne Kelley</span>
-                  </SelectItem>
+
+                  {instructors.map((instructor) => (
+                    <SelectItem key={instructor.id} value={instructor.id}>
+                      <Avatar className="h-6 w-6 rounded-full">
+                        <AvatarImage
+                          src={instructor.photoUrl ?? ""}
+                          alt={instructor.name}
+                          className="object-cover"
+                        />
+                        <AvatarFallback className="rounded-lg">
+                          {`${instructor.name[0]}${instructor.name[1]}`}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="truncate">{instructor.name}</span>
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
           <div className="*:not-first:mt-2">
-            <Label htmlFor={id}>Tipo de aula</Label>
-            <Select defaultValue="1">
+            <Label htmlFor="class-type">Tipo de aula</Label>
+            <Select
+              defaultValue="NORMAL"
+              value={selectedClassType}
+              onValueChange={setSelectedClassType}
+            >
               <SelectTrigger
-                id={id}
+                id="class-type"
                 className="ps-2 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_img]:shrink-0"
               >
-                <SelectValue placeholder="Select framework" />
+                <SelectValue placeholder="Selecione o tipo de aula" />
               </SelectTrigger>
               <SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]>span]:flex [&_*[role=option]>span]:items-center [&_*[role=option]>span]:gap-2">
                 <SelectGroup>
                   <SelectLabel className="ps-2">
                     Selecione o tipo de aula
                   </SelectLabel>
-                  <SelectItem value="1">
+                  <SelectItem value="NORMAL">
                     <span className="truncate">Normal</span>
                   </SelectItem>
-                  <SelectItem value="2">
+                  <SelectItem value="REPLACEMENT">
                     <span className="truncate">Reposição</span>
                   </SelectItem>
-                  <SelectItem value="3">
+                  <SelectItem value="EXPERIMENTAL">
                     <span className="truncate">Experimental</span>
                   </SelectItem>
                 </SelectGroup>
@@ -369,10 +382,10 @@ export function EventDialog({
 
           {event?.id && (
             <div className="*:not-first:mt-2">
-              <Label htmlFor={id}>Status da aula</Label>
+              <Label htmlFor="class-status">Status da aula</Label>
               <Select defaultValue="1">
                 <SelectTrigger
-                  id={id}
+                  id="class-status"
                   className="ps-2 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_img]:shrink-0"
                 >
                   <SelectValue placeholder="Select framework" />
@@ -441,7 +454,12 @@ export function EventDialog({
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button onClick={handleSave}>Salvar</Button>
+            <Button
+              className="text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold"
+              onClick={handleSave}
+            >
+              Salvar
+            </Button>
           </div>
         </DialogFooter>
       </DialogContent>

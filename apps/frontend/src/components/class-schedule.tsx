@@ -2,32 +2,16 @@ import { EventCalendar, type CalendarEvent } from "@/components/event-calendar";
 
 interface ClassScheduleProps {
   events: CalendarEvent[];
+  onRefetch: () => Promise<void>;
 }
 
-export function ClassSchedule({ events }: ClassScheduleProps) {
-  // const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
-
-  // const handleEventAdd = (event: CalendarEvent) => {
-  //   setEvents([...events, event]);
-  // };
-
-  // const handleEventUpdate = (updatedEvent: CalendarEvent) => {
-  //   setEvents(
-  //     events.map((event) =>
-  //       event.id === updatedEvent.id ? updatedEvent : event
-  //     )
-  //   );
-  // };
-
-  // const handleEventDelete = (eventId: string) => {
-  //   setEvents(events.filter((event) => event.id !== eventId));
-  // };
-
+export function ClassSchedule({ events, onRefetch }: ClassScheduleProps) {
   return (
     // Add min-h-screen to make it full height
     <div className="flex flex-col">
       <EventCalendar
         events={events}
+        onRefetch={onRefetch}
         // onEventAdd={handleEventAdd}
         // onEventUpdate={handleEventUpdate}
         // onEventDelete={handleEventDelete}

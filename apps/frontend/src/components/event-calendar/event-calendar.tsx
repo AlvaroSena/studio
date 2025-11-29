@@ -43,6 +43,8 @@ import {
   WeekView,
 } from "@/components/event-calendar";
 import { ptBR } from "date-fns/locale";
+import { api } from "@/lib/api";
+import { isAxiosError } from "axios";
 
 export interface EventCalendarProps {
   events?: CalendarEvent[];
@@ -51,15 +53,16 @@ export interface EventCalendarProps {
   onEventDelete?: (eventId: string) => void;
   className?: string;
   initialView?: CalendarView;
+  onRefetch: () => Promise<void>;
 }
 
 export function EventCalendar({
   events = [],
-  onEventAdd,
   onEventUpdate,
   onEventDelete,
   className,
   initialView = "month",
+  onRefetch,
 }: EventCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<CalendarView>(initialView);
@@ -172,24 +175,56 @@ export function EventCalendar({
     setIsEventDialogOpen(true);
   };
 
-  const handleEventSave = (event: CalendarEvent) => {
+  const handleEventSave = async (event: CalendarEvent) => {
     if (event.id) {
-      onEventUpdate?.(event);
-      // Show toast notification when an event is updated
-      toast(`Event "${event.title}" updated`, {
-        description: format(new Date(event.date), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
+      try {
+        const response = await api.put(`/classes/reschedule/${event.id}`, {
+          studioId: event.studioId,
+          instructorId: event.instructorId,
+          date: event.date,
+          status: event.status,
+          type: event.type,
+          // color: event.color,
+        });
+
+        if (response && response.status === 201) {
+          toast.success(`Aula "${event.title}" reagendada`, {
+            description: format(new Date(event.date), "MMM d, yyyy"),
+            position: "bottom-right",
+          });
+        }
+      } catch (err) {
+        if (isAxiosError(err) && err.status !== 201) {
+          toast.error("Erro ao reagendar aula. Tente novamente mais tarde.");
+        }
+      } finally {
+        onRefetch();
+      }
     } else {
-      onEventAdd?.({
-        ...event,
-        id: Math.random().toString(36).substring(2, 11),
-      });
-      // Show toast notification when an event is added
-      toast(`Event "${event.title}" added`, {
-        description: format(new Date(event.date), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
+      try {
+        const response = await api.post("/classes", {
+          title: event.title,
+          studioId: event.studioId,
+          instructorId: event.instructorId,
+          date: event.date,
+          status: event.status,
+          type: event.type,
+          color: event.color,
+        });
+
+        if (response && response.status === 201) {
+          toast.success(`Aula "${event.title}" agendada`, {
+            description: format(new Date(event.date), "MMM d, yyyy"),
+            position: "bottom-right",
+          });
+        }
+      } catch (err) {
+        if (isAxiosError(err) && err.status !== 201) {
+          toast.error("Erro ao agendar aula. Tente novamente mais tarde.");
+        }
+      } finally {
+        onRefetch();
+      }
     }
     setIsEventDialogOpen(false);
     setSelectedEvent(null);
