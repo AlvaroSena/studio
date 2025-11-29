@@ -26,6 +26,8 @@ export class EnrollmentRepository implements IEnrollmentRepository {
         studentId: enrollments.studentId,
         studentName: students.name,
         classTitle: classes.title,
+        classDate: classes.date,
+        classType: classes.type,
       })
       .from(enrollments)
       .leftJoin(students, eq(enrollments.studentId, students.id))
@@ -69,5 +71,11 @@ export class EnrollmentRepository implements IEnrollmentRepository {
 
   async delete(id: string): Promise<void> {
     await db.delete(enrollments).where(eq(enrollments.id, id));
+  }
+
+  async deleteMany(enrollmentsIds: string[]): Promise<void> {
+    for (const id of enrollmentsIds) {
+      await db.delete(enrollments).where(eq(enrollments.id, id));
+    }
   }
 }

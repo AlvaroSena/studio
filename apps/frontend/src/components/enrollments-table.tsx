@@ -27,13 +27,13 @@ import {
   Columns3Icon,
   EllipsisIcon,
   ListFilterIcon,
+  LoaderCircle,
   TrashIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -77,6 +77,10 @@ import {
 } from "@/components/ui/table";
 import type { EnrollmentType } from "@/components/enrollments";
 import { MakeEnrollmentDialog } from "./make-enrollment-dialog";
+import { Badge } from "./ui/badge";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
+import { isAxiosError } from "axios";
 
 type Item = {
   id: string;
@@ -113,6 +117,10 @@ const columns: ColumnDef<Item>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "id",
+    enableHiding: true,
+  },
+  {
     header: "Aluno",
     accessorKey: "studentName",
     cell: ({ row }) => (
@@ -125,6 +133,39 @@ const columns: ColumnDef<Item>[] = [
     header: "Aula",
     accessorKey: "classTitle",
     size: 220,
+  },
+  {
+    header: "Data da aula",
+    accessorKey: "classDate",
+    cell: ({ row }) => {
+      const value = row.getValue("classDate") as string;
+      const date = new Date(value);
+
+      const formatted = new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(date);
+
+      return <div>{formatted}</div>;
+    },
+    size: 220,
+  },
+  {
+    header: "Tipo da aula",
+    accessorKey: "classType",
+    size: 220,
+    cell: ({ row }) => (
+      <div>
+        {row.getValue("classType") === "NORMAL" && <Badge>Normal</Badge>}{" "}
+        {row.getValue("classType") === "REPLACEMENT" && (
+          <Badge>Reposição</Badge>
+        )}{" "}
+        {row.getValue("classType") === "EXPERIMENTAL" && (
+          <Badge>Experimental</Badge>
+        )}{" "}
+      </div>
+    ),
   },
   {
     id: "actions",
@@ -143,7 +184,9 @@ interface EnrollmentsTableProps {
 export function EnrollmentsTable({ data, onRefetch }: EnrollmentsTableProps) {
   const id = useId();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    id: false,
+  });
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -157,13 +200,33 @@ export function EnrollmentsTable({ data, onRefetch }: EnrollmentsTableProps) {
     },
   ]);
 
-  // const handleDeleteRows = () => {
-  //   const selectedRows = table.getSelectedRowModel().rows;
-  //   const updatedData = data.filter(
-  //     (item) => !selectedRows.some((row) => row.original.id === item.id)
-  //   );
-  //   table.resetRowSelection();
-  // };
+  const [isPending, setTransition] = useState(false);
+
+  const handleDeleteRows = async () => {
+    setTransition(true);
+    const selectedIds = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.original.id);
+
+    try {
+      const response = await api.post("/enrollments/delete-many", {
+        enrollmentsIds: selectedIds,
+      });
+
+      if (response && response.status === 204) {
+        onRefetch();
+        toast.success("Matrícula(s) excluídas com sucesso");
+      }
+    } catch (err) {
+      if (isAxiosError(err) && err.status !== 204) {
+        toast.error(
+          "Erro ao excluir matrícula(s). Tente novamente mais tarde."
+        );
+      }
+    } finally {
+      setTransition(false);
+    }
+  };
 
   const table = useReactTable({
     data,
@@ -257,7 +320,10 @@ export function EnrollmentsTable({ data, onRefetch }: EnrollmentsTableProps) {
                       }
                       onSelect={(event) => event.preventDefault()}
                     >
-                      {column.id}
+                      {column.id === "id" && <span>Id</span>}
+                      {column.id === "classTitle" && "Aula"}
+                      {column.id === "classDate" && "Data"}
+                      {column.id === "classType" && "Tipo"}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
@@ -290,22 +356,24 @@ export function EnrollmentsTable({ data, onRefetch }: EnrollmentsTableProps) {
                     <CircleAlertIcon className="opacity-80" size={16} />
                   </div>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete{" "}
-                      {table.getSelectedRowModel().rows.length} selected{" "}
-                      {table.getSelectedRowModel().rows.length === 1
-                        ? "row"
-                        : "rows"}
-                      .
+                      Todas as matrículas serão excluídas permanentemente
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                 </div>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction>Delete</AlertDialogAction>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+
+                  <Button
+                    variant="destructive"
+                    type="button"
+                    onClick={() => handleDeleteRows()}
+                    disabled={isPending}
+                  >
+                    {isPending && <LoaderCircle className="animate-spin" />}
+                    Excluir
+                  </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>

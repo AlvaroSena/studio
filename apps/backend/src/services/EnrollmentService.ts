@@ -32,25 +32,25 @@ export class EnrollmentService {
     const enrollments = classExists.getEnrollments();
 
     if (enrollments && enrollments.length >= 3) {
-      throw new BadRequestException("You've reached the limit of three students per class");
+      throw new BadRequestException("Você atingiu o limite de 3 alunos por aula");
     }
 
     const isStudentAlreadyEnrolled = enrollments?.some((enrollment) => enrollment.studentId === dto.studentId);
 
     if (isStudentAlreadyEnrolled) {
-      throw new ConflictException("The student is already enrolled in this class");
+      throw new ConflictException("O aluno já está matriculado nesta aula");
     }
 
     const doesStudentHaveASubscription = await this.subscriptionRepository.findByStudentId(dto.studentId);
 
     if (!doesStudentHaveASubscription || doesStudentHaveASubscription.getStatus() !== "ACTIVE") {
-      throw new BadRequestException("The student needs to have an active subscription to enroll");
+      throw new BadRequestException("O aluno precisa ter uma assinatura ativa para se matricular em uma aula");
     }
 
     const studentExists = await this.studentRepository.findById(dto.studentId);
 
     if (!studentExists) {
-      throw new NotFoundException("Student not found.");
+      throw new NotFoundException("Aluno não encontrado");
     }
 
     const enrollment = await this.repository.save(new Enrollment(dto));
@@ -100,5 +100,13 @@ export class EnrollmentService {
     }
 
     await this.repository.delete(id);
+  }
+
+  async removeMany(enrollmentsIds: string[]) {
+    if (!enrollmentsIds) {
+      throw new BadRequestException("IDs weren't provided");
+    }
+
+    await this.repository.deleteMany(enrollmentsIds);
   }
 }

@@ -50,3 +50,8 @@ enrollmentRoutes.delete(
   restVerifyCollaboratorToken(["admin", "recepcionist"]),
   (request: Request, response: Response, next: NextFunction) => enrollmentController.delete(request, response, next),
 );
+enrollmentRoutes.post(
+  "/delete-many",
+  restVerifyCollaboratorToken(["admin", "recepcionist"]),
+  (request: Request, response: Response) => enrollmentController.deleteMany(request, response),
+);

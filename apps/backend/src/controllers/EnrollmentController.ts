@@ -74,4 +74,12 @@ export class EnrollmentController {
       next(err);
     }
   }
+
+  async deleteMany(request: Request, response: Response) {
+    const { enrollmentsIds } = request.body;
+
+    await this.enrollmentService.removeMany(enrollmentsIds);
+
+    return response.status(204).send();
+  }
 }
