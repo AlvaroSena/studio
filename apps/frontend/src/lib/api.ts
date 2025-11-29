@@ -64,3 +64,10 @@ export async function getSubscriptions() {
 
   return data;
 }
+
+export async function getEnrollments() {
+  const response = await api.get("/enrollments");
+  const data = response.data;
+
+  return data;
+}

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
-  type FilterFn,
   type PaginationState,
   type Row,
   type SortingState,
@@ -76,23 +75,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getStudents } from "@/lib/api";
-import { CreateStudentDialog } from "./create-student-dialog";
+import type { EnrollmentType } from "@/components/enrollments";
+import { MakeEnrollmentDialog } from "./make-enrollment-dialog";
 
 type Item = {
   id: string;
-  name: string;
-  avatarUrl: string | null;
-  email: string;
+  classId: string;
+  studentId: string;
+  studentName: string;
+  classTitle: string;
 };
 
 // Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<Item> = (row, filterValue) => {
-  const searchableRowContent =
-    `${row.original.name} ${row.original.email}`.toLowerCase();
-  const searchTerm = (filterValue ?? "").toLowerCase();
-  return searchableRowContent.includes(searchTerm);
-};
 
 const columns: ColumnDef<Item>[] = [
   {
@@ -119,18 +113,17 @@ const columns: ColumnDef<Item>[] = [
     enableHiding: false,
   },
   {
-    header: "Nome",
-    accessorKey: "name",
+    header: "Aluno",
+    accessorKey: "studentName",
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("name")}</div>
+      <div className="font-medium">{row.getValue("studentName")}</div>
     ),
     size: 180,
-    filterFn: multiColumnFilterFn,
     enableHiding: false,
   },
   {
-    header: "Email",
-    accessorKey: "email",
+    header: "Aula",
+    accessorKey: "classTitle",
     size: 220,
   },
   {
@@ -142,7 +135,12 @@ const columns: ColumnDef<Item>[] = [
   },
 ];
 
-export function StudentsTable() {
+interface EnrollmentsTableProps {
+  data: EnrollmentType[];
+  onRefetch: () => Promise<void>;
+}
+
+export function EnrollmentsTable({ data, onRefetch }: EnrollmentsTableProps) {
   const id = useId();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -159,19 +157,13 @@ export function StudentsTable() {
     },
   ]);
 
-  const [data, setData] = useState<Item[]>([]);
-  useEffect(() => {
-    getStudents().then((data) => setData(data));
-  }, []);
-
-  const handleDeleteRows = () => {
-    const selectedRows = table.getSelectedRowModel().rows;
-    const updatedData = data.filter(
-      (item) => !selectedRows.some((row) => row.original.id === item.id)
-    );
-    setData(updatedData);
-    table.resetRowSelection();
-  };
+  // const handleDeleteRows = () => {
+  //   const selectedRows = table.getSelectedRowModel().rows;
+  //   const updatedData = data.filter(
+  //     (item) => !selectedRows.some((row) => row.original.id === item.id)
+  //   );
+  //   table.resetRowSelection();
+  // };
 
   const table = useReactTable({
     data,
@@ -313,14 +305,12 @@ export function StudentsTable() {
                 </div>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteRows}>
-                    Delete
-                  </AlertDialogAction>
+                  <AlertDialogAction>Delete</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           )}
-          <CreateStudentDialog />
+          <MakeEnrollmentDialog onRefetch={onRefetch} />
         </div>
       </div>
 
@@ -553,10 +543,6 @@ function RowActions(_props: { row: Row<Item> }) {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>
-          <span>Editar</span>
-          <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
-        </DropdownMenuItem>
         <DropdownMenuItem className="text-destructive focus:text-destructive">
           <span>Excluir</span>
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>

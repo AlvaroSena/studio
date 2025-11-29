@@ -12,7 +12,7 @@ import { ForgotPassword } from "@/pages/forgot-password";
 import { ResetPassword } from "@/pages/reset-password";
 import { Students } from "@/pages/students";
 import { Plans } from "@/pages/plans";
-import { Subscriptions } from "@/pages/subscriptionts";
+import { Subscriptions } from "@/pages/subscriptions";
 
 export function AppRoutes() {
   return (
