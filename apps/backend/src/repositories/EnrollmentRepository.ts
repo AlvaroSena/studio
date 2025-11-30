@@ -37,7 +37,20 @@ export class EnrollmentRepository implements IEnrollmentRepository {
   }
 
   async findAllByClassId(classId: string): Promise<any[]> {
-    const result = await db.select().from(enrollments).where(eq(enrollments.classId, classId));
+    const result = await db
+      .select({
+        id: enrollments.id,
+        classId: enrollments.classId,
+        studentId: enrollments.studentId,
+        studentName: students.name,
+        classTitle: classes.title,
+        classDate: classes.date,
+        classType: classes.type,
+      })
+      .from(enrollments)
+      .where(eq(enrollments.classId, classId))
+      .leftJoin(students, eq(enrollments.studentId, students.id))
+      .leftJoin(classes, eq(enrollments.classId, classes.id));
 
     return result;
   }

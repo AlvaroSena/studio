@@ -1,5 +1,5 @@
 import { ClassSchedule } from "@/components/class-schedule";
-import { CalendarFold, FileCheck, Settings } from "lucide-react";
+import { CalendarFold, Settings } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { getStudioClasses } from "@/lib/api";
 import { StudioWorkSchedule } from "@/components/studio-work-schedule";
 import type { CalendarEvent } from "@/components/event-calendar";
-import { Enrollments } from "@/components/enrollments";
 
 export function StudioAgenda() {
   const { id } = useParams();
@@ -55,15 +54,6 @@ export function StudioAgenda() {
             </TabsTrigger>
 
             <TabsTrigger value="tab-2">
-              <FileCheck
-                className="-ms-0.5 me-0 md:me-1.5 opacity-60"
-                size={16}
-                aria-hidden="true"
-              />
-              <span className="hidden md:inline">Matrículas</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="tab-3">
               <Settings
                 className="-ms-0.5 me-0 md:me-1.5 opacity-60"
                 size={16}
@@ -79,9 +69,6 @@ export function StudioAgenda() {
           <ClassSchedule events={classes} onRefetch={() => loadEvents()} />
         </TabsContent>
         <TabsContent value="tab-2">
-          <Enrollments />
-        </TabsContent>
-        <TabsContent value="tab-3">
           {id && (
             <div className="flex flex-col gap-8">
               <StudioWorkSchedule studioId={id} />

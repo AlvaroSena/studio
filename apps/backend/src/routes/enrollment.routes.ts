@@ -27,7 +27,7 @@ enrollmentRoutes.get(
   (request: Request, response: Response, next: NextFunction) => enrollmentController.listAll(request, response, next),
 );
 enrollmentRoutes.get(
-  "/classes/:classId",
+  "/classes/many/:classId",
   restVerifyCollaboratorToken(["admin", "recepcionist"]),
   (request: Request, response: Response, next: NextFunction) =>
     enrollmentController.listByClassId(request, response, next),
