@@ -13,6 +13,7 @@ import { ResetPassword } from "@/pages/reset-password";
 import { Students } from "@/pages/students";
 import { Plans } from "@/pages/plans";
 import { Subscriptions } from "@/pages/subscriptions";
+import { Enrollments } from "@/pages/enrollments";
 
 export function AppRoutes() {
   return (
@@ -63,6 +64,16 @@ export function AppRoutes() {
           <Protected>
             <Layout>
               <StudioAgenda />
+            </Layout>
+          </Protected>
+        }
+      />
+      <Route
+        path="/studios/enrollments/:classId"
+        element={
+          <Protected>
+            <Layout>
+              <Enrollments />
             </Layout>
           </Protected>
         }

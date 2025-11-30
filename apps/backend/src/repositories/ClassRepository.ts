@@ -100,6 +100,7 @@ export class ClassRepository implements IClassRepository {
         date: new Date(data.getDate()),
         status: data.getStatus(),
         type: data.getType(),
+        color: data.getColor(),
       })
       .where(eq(classes.id, id))
       .returning();

@@ -39,7 +39,9 @@ import { SelectGroup, SelectLabel } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { StatusDot } from "../status-dot";
 import { api } from "@/lib/api";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { FileCheck } from "lucide-react";
+import { toast } from "sonner";
 
 interface EventDialogProps {
   event: CalendarEvent | null;
@@ -74,6 +76,7 @@ export function EventDialog({
   const [instructors, setInstructors] = useState<InstructorType[]>([]);
   const [selectedInstructorId, setSelectedInstructorId] = useState("");
   const [selectedClassType, setSelectedClassType] = useState("");
+  const [selectedClassStatus, setSelectedClassStatus] = useState("");
 
   useEffect(() => {
     const fetchInstructors = async () => {
@@ -137,6 +140,21 @@ export function EventDialog({
   }, []); // Empty dependency array ensures this only runs once
 
   const handleSave = () => {
+    if (!selectedInstructorId) {
+      toast.warning("Selecione um instrutor");
+      return;
+    }
+
+    if (!selectedClassType) {
+      toast.warning("Selecione o tipo da aula");
+      return;
+    }
+
+    if (!selectedClassStatus) {
+      toast.warning("Selecione o status da aula");
+      return;
+    }
+
     const start = new Date(startDate);
 
     const [hour, minute] = startTime.split(":").map(Number);
@@ -314,6 +332,7 @@ export function EventDialog({
           <div className="*:not-first:mt-2">
             <Label htmlFor="select-instructor">Instrutor</Label>
             <Select
+              defaultValue={event?.instructorId}
               value={selectedInstructorId}
               onValueChange={setSelectedInstructorId}
             >
@@ -351,7 +370,7 @@ export function EventDialog({
           <div className="*:not-first:mt-2">
             <Label htmlFor="class-type">Tipo de aula</Label>
             <Select
-              defaultValue="NORMAL"
+              defaultValue={event?.type}
               value={selectedClassType}
               onValueChange={setSelectedClassType}
             >
@@ -383,7 +402,11 @@ export function EventDialog({
           {event?.id && (
             <div className="*:not-first:mt-2">
               <Label htmlFor="class-status">Status da aula</Label>
-              <Select defaultValue="1">
+              <Select
+                defaultValue={event?.status}
+                value={selectedClassStatus}
+                onValueChange={setSelectedClassStatus}
+              >
                 <SelectTrigger
                   id="class-status"
                   className="ps-2 [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_img]:shrink-0"
@@ -395,15 +418,15 @@ export function EventDialog({
                     <SelectLabel className="ps-2">
                       Selecione o status da aula
                     </SelectLabel>
-                    <SelectItem value="1">
+                    <SelectItem value="SCHEDULED">
                       <StatusDot className="text-blue-500" />
                       <span className="truncate">Agendada</span>
                     </SelectItem>
-                    <SelectItem value="2">
+                    <SelectItem value="DONE">
                       <StatusDot className="text-emerald-600" />
                       <span className="truncate">Finalizada</span>
                     </SelectItem>
-                    <SelectItem value="3">
+                    <SelectItem value="CANCELED">
                       <StatusDot className="text-red-500" />
                       <span className="truncate">Cancelada</span>
                     </SelectItem>
@@ -438,6 +461,18 @@ export function EventDialog({
               ))}
             </RadioGroup>
           </fieldset>
+
+          {event?.id && (
+            <fieldset className="space-y-4">
+              <Link
+                to={`/studios/enrollments/${event.id}`}
+                className="flex items-center gap-2 text-sm text-foreground underline transition hover:text-foreground/60"
+              >
+                <FileCheck size={18} />
+                Ver matrículas desta aula
+              </Link>
+            </fieldset>
+          )}
         </div>
         <DialogFooter className="flex-row sm:justify-between">
           {event?.id && (

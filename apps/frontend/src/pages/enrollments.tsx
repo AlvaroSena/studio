@@ -1,6 +1,7 @@
 import { EnrollmentsTable } from "@/components/enrollments-table";
-import { getEnrollments } from "@/lib/api";
+import { getEnrollmentsByClass } from "@/lib/api";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 export type EnrollmentType = {
   id: string;
@@ -11,10 +12,12 @@ export type EnrollmentType = {
 };
 
 export function Enrollments() {
+  const { classId } = useParams();
+
   const [enrollments, setEnrollments] = useState<EnrollmentType[]>([]);
 
-  const loadEnrollments = async () => {
-    const data = await getEnrollments();
+  const loadEnrollments = async (classId: string) => {
+    const data = await getEnrollmentsByClass(classId);
 
     if (data) {
       setEnrollments(data);
@@ -22,16 +25,20 @@ export function Enrollments() {
   };
 
   useEffect(() => {
-    loadEnrollments();
-  }, []);
+    if (!classId) {
+      return;
+    }
+
+    loadEnrollments(classId);
+  }, [classId]);
 
   return (
-    <div>
+    <div className="mx-4 lg:mx-6">
       <h1 className="text-2xl poppins-bold text-primary">Matrículas</h1>
       <div className="my-8">
         <EnrollmentsTable
           data={enrollments}
-          onRefetch={() => loadEnrollments()}
+          onRefetch={() => loadEnrollments(classId ?? "")}
         />
       </div>
     </div>

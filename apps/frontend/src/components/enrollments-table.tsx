@@ -75,12 +75,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { EnrollmentType } from "@/components/enrollments";
 import { MakeEnrollmentDialog } from "./make-enrollment-dialog";
 import { Badge } from "./ui/badge";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
+import type { EnrollmentType } from "@/pages/enrollments";
 
 type Item = {
   id: string;

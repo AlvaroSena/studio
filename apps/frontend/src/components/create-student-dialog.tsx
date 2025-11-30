@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DateField, DateInput } from "@/components/ui/datefield-rac";
 import { api } from "@/lib/api";
+import { PhoneNumberInput } from "./PhoneInput";
 
 const createStudentForm = z.object({
   name: z.string({ message: "Nome é obrigatório" }),
@@ -50,7 +51,9 @@ export function CreateStudentDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Adicionar aluno</Button>
+        <Button className="text-white bg-emerald-800 hover:bg-emerald-700 poppins-semibold">
+          Adicionar aluno
+        </Button>
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg [&>button:last-child]:top-3.5">
         <DialogHeader className="contents space-y-0 text-left">
@@ -111,12 +114,7 @@ export function CreateStudentDialog() {
               <div className="flex flex-col gap-4 sm:flex-row">
                 <div className="flex-1 space-y-2">
                   <Label htmlFor={`${id}-first-name`}>Telefone</Label>
-                  <Input
-                    id={`${id}-first-name`}
-                    placeholder="Telefone"
-                    type="text"
-                    {...register("phone")}
-                  />
+                  <PhoneNumberInput />
                 </div>
               </div>
               <div className="flex flex-col gap-4 sm:flex-row">

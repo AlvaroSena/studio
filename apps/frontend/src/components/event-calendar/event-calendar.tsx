@@ -59,7 +59,6 @@ export interface EventCalendarProps {
 export function EventCalendar({
   events = [],
   onEventUpdate,
-  onEventDelete,
   className,
   initialView = "month",
   onRefetch,
@@ -179,16 +178,17 @@ export function EventCalendar({
     if (event.id) {
       try {
         const response = await api.put(`/classes/reschedule/${event.id}`, {
+          title: event.title,
           studioId: event.studioId,
           instructorId: event.instructorId,
           date: event.date,
           status: event.status,
           type: event.type,
-          // color: event.color,
+          color: event.color,
         });
 
-        if (response && response.status === 201) {
-          toast.success(`Aula "${event.title}" reagendada`, {
+        if (response && response.status === 200) {
+          toast.success(`Aula "${event.title}" foi reagendada`, {
             description: format(new Date(event.date), "MMM d, yyyy"),
             position: "bottom-right",
           });
@@ -230,18 +230,21 @@ export function EventCalendar({
     setSelectedEvent(null);
   };
 
-  const handleEventDelete = (eventId: string) => {
-    const deletedEvent = events.find((e) => e.id === eventId);
-    onEventDelete?.(eventId);
-    setIsEventDialogOpen(false);
-    setSelectedEvent(null);
+  const handleEventDelete = async (eventId: string) => {
+    try {
+      const response = await api.delete(`/classes/delete/${eventId}`);
 
-    // Show toast notification when an event is deleted
-    if (deletedEvent) {
-      toast(`Event "${deletedEvent.title}" deleted`, {
-        description: format(new Date(deletedEvent.date), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
+      if (response && response.status === 204) {
+        toast.success("Aula excluída com sucesso");
+      }
+    } catch (err) {
+      if (isAxiosError(err) && err.status !== 204) {
+        toast.error("Erro ao excluir aula.");
+      }
+    } finally {
+      onRefetch();
+      setIsEventDialogOpen(false);
+      setSelectedEvent(null);
     }
   };
 

@@ -71,3 +71,10 @@ export async function getEnrollments() {
 
   return data;
 }
+
+export async function getEnrollmentsByClass(classId: string) {
+  const response = await api.get(`/enrollments/classes/many/${classId}`);
+  const data = response.data;
+
+  return data;
+}
