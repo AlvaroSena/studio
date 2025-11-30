@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
@@ -102,7 +103,7 @@ type Item = {
 };
 
 // Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<Item> = (row, columnId, filterValue) => {
+const multiColumnFilterFn: FilterFn<Item> = (row, filterValue) => {
   const searchableRowContent =
     `${row.original.name} ${row.original.email}`.toLowerCase();
   const searchTerm = (filterValue ?? "").toLowerCase();
@@ -719,7 +720,7 @@ export default function Component() {
   );
 }
 
-function RowActions({ row }: { row: Row<Item> }) {
+function RowActions(_: { row: Row<Item> }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

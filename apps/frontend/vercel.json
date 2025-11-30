@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "pnpm -F appname build",
+  "buildCommand": "pnpm -F frontend build",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --frozen-lockfile",
   "framework": "vite",

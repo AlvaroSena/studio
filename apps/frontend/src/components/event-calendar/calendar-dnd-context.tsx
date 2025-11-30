@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useContext,
@@ -19,7 +20,6 @@ import {
   type DragStartEvent,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
-import { addMinutes, differenceInMinutes } from "date-fns";
 
 import { EventItem, type CalendarEvent } from "@/components/event-calendar";
 
@@ -70,7 +70,7 @@ export function CalendarDndProvider({
   const [activeEvent, setActiveEvent] = useState<CalendarEvent | null>(null);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [activeView, setActiveView] = useState<"month" | "week" | "day" | null>(
-    null,
+    null
   );
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [eventHeight, setEventHeight] = useState<number | null>(null);
@@ -108,7 +108,7 @@ export function CalendarDndProvider({
       activationConstraint: {
         distance: 5,
       },
-    }),
+    })
   );
 
   // Generate a stable ID for the DndContext
@@ -149,7 +149,7 @@ export function CalendarDndProvider({
     setActiveEvent(calendarEvent);
     setActiveId(active.id);
     setActiveView(view);
-    setCurrentTime(new Date(calendarEvent.start));
+    setCurrentTime(new Date(calendarEvent.date));
     setIsMultiDay(eventIsMultiDay || false);
     setMultiDayWidth(eventMultiDayWidth || null);
     setDragHandlePosition(eventDragHandlePosition || null);
@@ -203,7 +203,7 @@ export function CalendarDndProvider({
             currentTime.getHours(),
             currentTime.getMinutes(),
             currentTime.getSeconds(),
-            currentTime.getMilliseconds(),
+            currentTime.getMilliseconds()
           );
         }
 
@@ -280,15 +280,12 @@ export function CalendarDndProvider({
           currentTime.getHours(),
           currentTime.getMinutes(),
           currentTime.getSeconds(),
-          currentTime.getMilliseconds(),
+          currentTime.getMilliseconds()
         );
       }
 
       // Calculate new end time based on the original duration
-      const originalStart = new Date(calendarEvent.start);
-      const originalEnd = new Date(calendarEvent.end);
-      const durationMinutes = differenceInMinutes(originalEnd, originalStart);
-      const newEnd = addMinutes(newStart, durationMinutes);
+      const originalStart = new Date(calendarEvent.date);
 
       // Only update if the start time has actually changed
       const hasStartTimeChanged =
@@ -302,8 +299,7 @@ export function CalendarDndProvider({
         // Update the event only if the time has changed
         onEventUpdate({
           ...calendarEvent,
-          start: newStart,
-          end: newEnd,
+          date: newStart,
         });
       }
     } catch (error) {

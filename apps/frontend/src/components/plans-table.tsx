@@ -27,7 +27,6 @@ import {
   CircleXIcon,
   Columns3Icon,
   EllipsisIcon,
-  ListFilterIcon,
   TrashIcon,
 } from "lucide-react";
 
@@ -43,7 +42,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -55,7 +53,6 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Pagination,
@@ -92,16 +89,6 @@ const multiColumnFilterFn: FilterFn<Item> = (row, filterValue) => {
   const searchableRowContent = `${row.original.period}`.toLowerCase();
   const searchTerm = (filterValue ?? "").toLowerCase();
   return searchableRowContent.includes(searchTerm);
-};
-
-const statusFilterFn: FilterFn<Item> = (
-  row,
-  columnId,
-  filterValue: string[]
-) => {
-  if (!filterValue?.length) return true;
-  const status = row.getValue(columnId) as string;
-  return filterValue.includes(status);
 };
 
 const columns: ColumnDef<Item>[] = [
