@@ -59,13 +59,47 @@ Clone o repositório:
 
 ```bash
 git clone https://github.com/alvarosena/studio.git
+git fetch origin
+git checkout local
 cd studio
 ```
 
 Instalar dependências:
 
 ```bash
-npm install
+pnpm install
 ```
 
-continua...
+```bash
+cd apps/backend
+pnpm install
+```
+
+Criar arquivo .env e inserir todos os valores das variáveis que estão dentro de .env.example
+
+Dentro de apps/backend, execute:
+
+```bash
+docker compose up -d
+pnpm run db:seed
+```
+
+Execute o script de seed:
+
+```bash
+pnpm run db:seed
+```
+
+Inicie a aplicação:
+
+```bash
+pnpm run dev
+```
+
+```bash
+cd apps/frontend
+pnpm install
+pnpm run dev
+```
+
+Criar arquivo .env e inserir todos os valores das variáveis que estão dentro de .env.example
