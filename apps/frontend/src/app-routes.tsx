@@ -69,7 +69,7 @@ export function AppRoutes() {
         }
       />
       <Route
-        path="/studios/enrollments/:classId"
+        path="/studios/:studioId/enrollments/:classId"
         element={
           <Protected>
             <Layout>

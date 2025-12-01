@@ -465,7 +465,7 @@ export function EventDialog({
           {event?.id && (
             <fieldset className="space-y-4">
               <Link
-                to={`/studios/enrollments/${event.id}`}
+                to={`/studios/${event.studioId}/enrollments/${event.id}`}
                 className="flex items-center gap-2 text-sm text-foreground underline transition hover:text-foreground/60"
               >
                 <FileCheck size={18} />

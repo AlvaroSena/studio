@@ -42,7 +42,7 @@ interface MakeEnrollmentDialogProps {
 }
 
 export function MakeEnrollmentDialog({ onRefetch }: MakeEnrollmentDialogProps) {
-  const { id } = useParams();
+  const { studioId } = useParams();
   const [selectedClassId, setSelectedClassId] = useState("");
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [classes, setClasses] = useState<ClassType[]>([]);
@@ -50,13 +50,13 @@ export function MakeEnrollmentDialog({ onRefetch }: MakeEnrollmentDialogProps) {
   const [isPending, setTransition] = useState(false);
 
   const loadData = async () => {
-    if (!id) {
+    if (!studioId) {
       return;
     }
 
     const [studentsData, classesData] = await Promise.all([
       getStudents(),
-      getStudioClasses(id),
+      getStudioClasses(studioId),
     ]);
 
     if (studentsData && classesData) {
