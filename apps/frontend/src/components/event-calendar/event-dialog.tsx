@@ -150,7 +150,7 @@ export function EventDialog({
       return;
     }
 
-    if (!selectedClassStatus) {
+    if (event?.id && !selectedClassStatus) {
       toast.warning("Selecione o status da aula");
       return;
     }
