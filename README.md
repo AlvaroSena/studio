@@ -59,8 +59,6 @@ Clone o repositório:
 
 ```bash
 git clone https://github.com/alvarosena/studio.git
-git fetch origin
-git checkout local
 cd studio
 ```
 
@@ -103,3 +101,46 @@ pnpm run dev
 ```
 
 Criar arquivo .env e inserir todos os valores das variáveis que estão dentro de .env.example
+
+## 📐 Arquitetura
+
+```mermaid
+flowchart LR
+    Client[Cliente / Frontend] -->|HTTP Requests| Controller[Controllers]
+    Controller --> Service[Services]
+    Service --> Repository[Repositories]
+    Repository --> Database[(PostgreSQL)]
+
+    subgraph Backend [Node.js + Express + TypeScript]
+        Controller
+        Service
+        Repository
+    end
+
+    subgraph Infra [Docker Compose]
+        Backend
+        Database
+    end
+```
+
+### 🔹 2. **Fluxo MVC + Camadas Internas**
+
+Mostra como as camadas se conectam dentro do backend.
+
+```mermaid
+sequenceDiagram
+    participant U as Usuário
+    participant C as Controller
+    participant S as Service
+    participant R as Repository
+    participant DB as PostgreSQL
+
+    U->>C: Envia requisição HTTP
+    C->>S: Chama regra de negócio
+    S->>R: Solicita dados
+    R->>DB: Executa query
+    DB-->>R: Retorna dados
+    R-->>S: Entidades / DTOs
+    S-->>C: Resultado da regra
+    C-->>U: Resposta HTTP
+```
